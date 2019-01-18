@@ -50,9 +50,6 @@ const styles = {
       fontWeight: "400",
       lineHeight: "1"
     }
-  },
-  wideSelect: {
-    width: "100%"
   }
 };
 
@@ -72,7 +69,8 @@ class EditExercises extends React.Component {
 
   render() {
     const { classes } = this.props;
-    return <Card>
+    return (
+      <Card>
         <CardHeader color="primary">
           <h4 className={classes.cardTitleWhite}>Edit exercises</h4>
         </CardHeader>
@@ -101,9 +99,7 @@ class EditExercises extends React.Component {
                       <Select
                         value={this.state.exercises[index].measurement}
                         onChange={this.handleChange}
-                        input={
-                          <Input name="measurement" id="age-auto-width" />
-                        }
+                        input={<Input name="measurement" id="age-auto-width" />}
                       >
                         /* autoWidth */
                         <MenuItem value="kilograms">kilograms</MenuItem>
@@ -128,7 +124,8 @@ class EditExercises extends React.Component {
             </TableBody>
           </Table>
         </CardBody>
-      </Card>;
+      </Card>
+    );
   }
 }
 

@@ -11,6 +11,7 @@ import Unarchive from "@material-ui/icons/Unarchive";
 import DashboardPage from "../views/Dashboard/Dashboard.jsx";
 import NewExercise from "../views/NewExercise/NewExercise.jsx";
 import EditExercises from "../views/EditExercises/EditExercises.jsx";
+import Workout from "../views/Workout/Workout.jsx";
 import Typography from "../views/Typography/Typography.jsx";
 import Icons from "../views/Icons/Icons.jsx";
 
@@ -41,7 +42,7 @@ const dashboardRoutes = [
     sidebarName: "New Workout",
     navbarName: "Typography",
     icon: LibraryBooks,
-    component: Typography
+    component: Workout
   },
   {
     path: "/edit-workout",
