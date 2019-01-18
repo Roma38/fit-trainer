@@ -22,6 +22,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined.js";
 import ArrowDownwardOutlined from "@material-ui/icons/ArrowDownwardOutlined.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
+import { connect } from "react-redux";
 
 const styles = {
   cardCategoryWhite: {
@@ -53,18 +54,18 @@ const styles = {
   }
 };
 
-class EditExercises extends React.Component {
-  state = {
+class EditExercisesComponent extends React.Component {
+  /* state = {
     exercises: [
       { id: 1, name: "Exercise #1", measurement: "kilograms" },
       { id: 2, name: "Exercise #2", measurement: "minutes" },
-      { id: 3, name: "Exercise #3", measurement: "kilograms" }
+      { id: 3, name: "Exercise #3", measurement: "meters" }
     ]
-  };
+  }; */
 
   handleChange = (event, index) => {
     console.log(index);
-    this.setState({ [event.target.name]: event.target.value });
+    /* this.setState({ [event.target.name]: event.target.value }); */
   };
 
   render() {
@@ -77,7 +78,7 @@ class EditExercises extends React.Component {
         <CardBody>
           <Table>
             <TableBody>
-              {this.state.exercises.map((exercise, index) => (
+              {this.props.exercises.items.map((exercise, index) => (
                 <TableRow key={exercise.id}>
                   <TableCell>
                     <CustomInput
@@ -87,7 +88,7 @@ class EditExercises extends React.Component {
                       inputProps={{
                         name: "exerciseName",
                         onChange: event => this.handleChange(event, index),
-                        value: this.state.exercises[index].name
+                        value: this.props.exercises.items[index].name
                       }}
                     />
                   </TableCell>
@@ -97,7 +98,7 @@ class EditExercises extends React.Component {
                         Measurement
                       </InputLabel>
                       <Select
-                        value={this.state.exercises[index].measurement}
+                        value={this.props.exercises.items[index].measurement}
                         onChange={this.handleChange}
                         input={<Input name="measurement" id="age-auto-width" />}
                       >
@@ -128,5 +129,9 @@ class EditExercises extends React.Component {
     );
   }
 }
+
+const mapStateToProps = ({ exercises }) => ({ exercises });
+
+const EditExercises = connect(mapStateToProps)(EditExercisesComponent);
 
 export default withStyles(styles)(EditExercises);

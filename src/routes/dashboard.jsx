@@ -26,28 +26,28 @@ const dashboardRoutes = [
   {
     path: "/new-exercise",
     sidebarName: "New Exercise",
-    navbarName: "Profile",
+    navbarName: "New Exercise",
     icon: LibraryBooks,
     component: NewExercise
   },
   {
     path: "/edit-exercises",
     sidebarName: "Edit Exercises",
-    navbarName: "Table List",
+    navbarName: "Edit Exercises",
     icon: LibraryBooks,
     component: EditExercises
   },
   {
     path: "/new-workout",
     sidebarName: "New Workout",
-    navbarName: "Typography",
+    navbarName: "New Workout",
     icon: LibraryBooks,
     component: Workout
   },
   {
     path: "/edit-workout",
     sidebarName: "Edit Workout",
-    navbarName: "Icons",
+    navbarName: "Edit Workout",
     icon: LibraryBooks,
     component: Icons
   },
