@@ -7,6 +7,7 @@ import GridContainer from "../../components/Grid/GridContainer";
 import Card from "../../components/Card/Card";
 import CardHeader from "../../components/Card/CardHeader";
 import CardBody from "../../components/Card/CardBody";
+import CardFooter from "../../components/Card/CardFooter";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -21,6 +22,9 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined.js";
 import ArrowDownwardOutlined from "@material-ui/icons/ArrowDownwardOutlined.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
+import Button from "../../components/CustomButtons/Button";
+
+import { connect } from "react-redux";
 
 const styles = {
   cardCategoryWhite: {
@@ -52,9 +56,7 @@ const styles = {
   }
 };
 
-class Workout extends React.Component {
-  state = {};
-
+class WorkoutComponent extends React.Component {
   render() {
     const { classes } = this.props;
     return (
@@ -63,12 +65,77 @@ class Workout extends React.Component {
           <h4 className={classes.cardTitleWhite}>Edit workout</h4>
         </CardHeader>
         <CardBody>
+          <Button color="primary">Add exercise</Button>
           <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  <FormControl fullWidth className={classes.formControl}>
+                    <InputLabel htmlFor="age-auto-width">
+                      Exercise
+                    </InputLabel>
+                    <Select
+                      value=""
+                      onChange={this.handleChange}
+                      input={<Input name="measurement" id="age-auto-width" />}
+                    >
+                      {this.props.exercises.items.map((exercise, index) => (
+                        <MenuItem key={index} value={exercise.name}>
+                          {exercise.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </TableCell>
+                <TableCell>
+                  <CustomInput
+                    labelText="Repeats"
+                    id="exerciseName"
+                    formControlProps={{ fullWidth: true }}
+                    inputProps={{
+                      name: "exerciseName",
+                      onChange: this.handleChange,
+                      type: "number"
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <CustomInput
+                    labelText="Measurement"
+                    id="exerciseName"
+                    formControlProps={{ fullWidth: true }}
+                    inputProps={{
+                      name: "exerciseName",
+                      onChange: this.handleChange,
+                      type: "number"
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton className={classes.button}>
+                    <ArrowUpwardOutlined />
+                  </IconButton>
+                  <IconButton className={classes.button}>
+                    <ArrowDownwardOutlined />
+                  </IconButton>
+                  <IconButton className={classes.button}>
+                    <CancelOutlined />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            </TableBody>
           </Table>
         </CardBody>
+        <CardFooter>
+          <Button color="primary">Update workout</Button>
+        </CardFooter>
       </Card>
     );
   }
 }
+
+const mapStateToProps = ({ exercises }) => ({ exercises });
+
+const Workout = connect(mapStateToProps)(WorkoutComponent);
 
 export default withStyles(styles)(Workout);

@@ -30,9 +30,6 @@ const styles = {
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
     textDecoration: "none"
-  },
-  wideSelect: {
-    width: "100%"
   }
 };
 

@@ -8,6 +8,7 @@ import GridContainer from "../../components/Grid/GridContainer";
 import Card from "../../components/Card/Card";
 import CardHeader from "../../components/Card/CardHeader";
 import CardBody from "../../components/Card/CardBody";
+import CardFooter from "../../components/Card/CardFooter";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -19,6 +20,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "../../components/CustomButtons/Button";
 import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined.js";
 import ArrowDownwardOutlined from "@material-ui/icons/ArrowDownwardOutlined.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
@@ -55,14 +57,6 @@ const styles = {
 };
 
 class EditExercisesComponent extends React.Component {
-  /* state = {
-    exercises: [
-      { id: 1, name: "Exercise #1", measurement: "kilograms" },
-      { id: 2, name: "Exercise #2", measurement: "minutes" },
-      { id: 3, name: "Exercise #3", measurement: "meters" }
-    ]
-  }; */
-
   handleChange = (event, index) => {
     console.log(index);
     /* this.setState({ [event.target.name]: event.target.value }); */
@@ -124,6 +118,9 @@ class EditExercisesComponent extends React.Component {
               ))}
             </TableBody>
           </Table>
+          <CardFooter>
+            <Button color="primary">Create exercise</Button>
+          </CardFooter>
         </CardBody>
       </Card>
     );
