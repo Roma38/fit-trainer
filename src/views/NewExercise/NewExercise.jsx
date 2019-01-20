@@ -78,9 +78,6 @@ class NewExercise extends React.Component {
         </CardBody>
         <CardFooter>
           <Button color="primary">Create exercise</Button>
-          <p>
-            {this.state.measurement} --- {this.state.exerciseName}
-          </p>
         </CardFooter>
       </Card>
     );

@@ -8,14 +8,12 @@ const initialState = {
   loading: false,
   succeed: false,
   error: null,
-  items: [
-    { id: 1, name: "Exercise #1", measurement: "kilograms" },
-    { id: 2, name: "Exercise #2", measurement: "minutes" },
-    { id: 3, name: "Exercise #3", measurement: "meters" }
-  ]
+  items: []
 };
 
 export const exercisesReduser = (state = initialState, { type, payload }) => {
+  console.log("exercisesReduser", type, payload);
+
   switch (type) {
     case EXERCISES_LOADING:
       return { ...state, loading: true, succeed: false };
