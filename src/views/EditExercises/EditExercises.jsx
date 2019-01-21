@@ -2,8 +2,6 @@ import React from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 // core components
-import GridItem from "../../components/Grid/GridItem";
-import GridContainer from "../../components/Grid/GridContainer";
 /* import Table from "../../components/Table/Table"; */
 import Card from "../../components/Card/Card";
 import CardHeader from "../../components/Card/CardHeader";
@@ -155,7 +153,7 @@ class EditExercisesComponent extends React.Component {
         this.setState({ exercises });
         /* this.setState({ exersices: exersices }); */
       })
-      .catch(() => {});
+      .catch((error) => { console.log(error) });
   }
 
   render() {
