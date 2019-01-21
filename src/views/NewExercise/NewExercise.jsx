@@ -68,7 +68,6 @@ class NewExercise extends React.Component {
                 onChange={this.handleChange}
                 input={<Input name="measurement" id="age-auto-width" />}
               >
-                /* autoWidth */
                 <MenuItem value="kilograms">kilograms</MenuItem>
                 <MenuItem value="meters">meters</MenuItem>
                 <MenuItem value="minutes">minutes</MenuItem>

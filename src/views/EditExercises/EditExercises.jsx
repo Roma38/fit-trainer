@@ -83,8 +83,6 @@ class EditExercisesComponent extends React.Component {
       target: { value, name }
     } = event;
 
-    console.log("handleChange", value, name);
-
     this.setState(state => {
       const newExercises = clone(state.exercises);
       newExercises[index][name] = value;
@@ -128,8 +126,6 @@ class EditExercisesComponent extends React.Component {
   };
 
   delExercise = () => {
-    console.log(this.state.exIndex);
-
     this.setState(state => {
       const newExercises = clone(state.exercises);
       newExercises.splice(state.exIndex, 1);
@@ -148,12 +144,10 @@ class EditExercisesComponent extends React.Component {
     axios
       .get("/exercises")
       .then(exercises => {
-        console.log("exercises loaded", exercises);
         exercisesLoadSucceed(exercises);
         this.setState({ exercises });
-        /* this.setState({ exersices: exersices }); */
       })
-      .catch((error) => { console.log(error) });
+      .catch(error => { console.log(error) });
   }
 
   render() {
@@ -215,7 +209,6 @@ class EditExercisesComponent extends React.Component {
                             <Input name="measurement" id="age-auto-width" />
                           }
                         >
-                          /* autoWidth */
                           <MenuItem value="kilograms">kilograms</MenuItem>
                           <MenuItem value="meters">meters</MenuItem>
                           <MenuItem value="minutes">minutes</MenuItem>

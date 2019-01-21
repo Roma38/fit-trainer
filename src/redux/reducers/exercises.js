@@ -12,8 +12,6 @@ const initialState = {
 };
 
 export const exercisesReduser = (state = initialState, { type, payload }) => {
-  console.log("exercisesReduser", type, payload);
-
   switch (type) {
     case EXERCISES_LOADING:
       return { ...state, loading: true, succeed: false };

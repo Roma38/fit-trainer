@@ -2,8 +2,6 @@ import React from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 // core components
-import GridItem from "../../components/Grid/GridItem";
-import GridContainer from "../../components/Grid/GridContainer";
 import Card from "../../components/Card/Card";
 import CardHeader from "../../components/Card/CardHeader";
 import CardBody from "../../components/Card/CardBody";
@@ -23,6 +21,7 @@ import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined.js";
 import ArrowDownwardOutlined from "@material-ui/icons/ArrowDownwardOutlined.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
 import Button from "../../components/CustomButtons/Button";
+import Modal from "@material-ui/core/Modal";
 
 import { connect } from "react-redux";
 import {
@@ -60,19 +59,29 @@ const styles = {
       fontWeight: "400",
       lineHeight: "1"
     }
+  },
+  modalStyles: {
+    position: "absolute",
+    width: "350px",
+    backgroundColor: "white",
+    /* boxShadow: theme.shadows[5], */
+    padding: "15px",
+    outline: "none"
   }
 };
 
 class WorkoutComponent extends React.Component {
   state = {
-    workout: [{ exercise: "", repeats: 0, measurement: 0 }]
+    openModal: false,
+    exIndex: null,
+    workout: [{ exercise: "", repeats: 0, measurement: 0, measurementType: "" }]
   };
 
   addExercise = () => {
     this.setState({
       workout: [
         ...this.state.workout,
-        { exercise: "", repeats: 0, measurement: 0 }
+        { exercise: "", repeats: 0, measurement: 0, measurementType: "" }
       ]
     });
   };
@@ -91,8 +100,61 @@ class WorkoutComponent extends React.Component {
     this.setState(state => {
       const newWorkout = clone(state.workout);
       newWorkout[index][name] = value;
+      if (name === "exercise") {
+        const exercise = this.props.exercises.items.find(
+          item => item.name === value
+        );
+        switch (exercise.measurement) {
+          case "kilograms":
+            newWorkout[index].measurementType = "kg";
+            break;
+          case "meters":
+            newWorkout[index].measurementType = "m";
+            break;
+          case "minutes":
+            newWorkout[index].measurementType = "min";
+            break;
+
+          default:
+            break;
+        }
+      }
       return { ...state, workout: newWorkout };
     });
+  };
+
+  delExercise = () => {
+    this.setState(state => {
+      const newWorkout = clone(state.workout);
+      newWorkout.splice(state.exIndex, 1);
+      return { ...state, workout: newWorkout, openModal: false, exIndex: null };
+    });
+  };
+
+  moveUp = (event, index) => {
+    if (index !== 0) {
+      this.setState(state => {
+        const newWorkout = clone(state.workout);
+        [newWorkout[index], newWorkout[index - 1]] = [
+          newWorkout[index - 1],
+          newWorkout[index]
+        ];
+        return { ...state, workout: newWorkout };
+      });
+    }
+  };
+
+  moveDown = (event, index) => {
+    if (index !== this.state.workout.length - 1) {
+      this.setState(state => {
+        const newWorkout = clone(state.workout);
+        [newWorkout[index], newWorkout[index + 1]] = [
+          newWorkout[index + 1],
+          newWorkout[index]
+        ];
+        return { ...state, workout: newWorkout };
+      });
+    }
   };
 
   componentDidMount() {
@@ -110,102 +172,126 @@ class WorkoutComponent extends React.Component {
 
   render() {
     const { classes } = this.props;
-    return <Card>
-        <CardHeader color="primary">
-          <h4 className={classes.cardTitleWhite}>Edit workout</h4>
-        </CardHeader>
-        <CardBody>
-          <Button onClick={this.addExercise} color="primary">
-            Add exercise
-          </Button>
-          <Table>
-            <TableBody>
-              {this.state.workout.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <FormControl fullWidth className={classes.formControl}>
-                      <InputLabel htmlFor="age-auto-width">
-                        Exercise
-                      </InputLabel>
-                      <Select
-                        value={item.exercise}
-                        onChange={event => this.handleChange(event, index)}
-                        input={
-                          <Input name="exercise" id="age-auto-width" />
-                        }
-                      >
-                        {this.props.exercises.items.map(
-                          (exercise, index) => (
+    return (
+      <React.Fragment>
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.openModal} /* onClose={this.handleClose} */
+        >
+          <div style={styles.modalStyles}>
+            <p>Are you sure wanna delete this exercise?</p>
+            <IconButton onClick={this.delExercise}>
+              <CancelOutlined />
+            </IconButton>
+            <IconButton
+              onClick={() =>
+                this.setState({
+                  openModal: false,
+                  exIndex: null
+                })
+              }
+            >
+              <CancelOutlined />
+            </IconButton>
+          </div>
+        </Modal>
+        <Card>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Edit workout</h4>
+          </CardHeader>
+          <CardBody>
+            <Button onClick={this.addExercise} color="primary">
+              Add exercise
+            </Button>
+            <Table>
+              <TableBody>
+                {this.state.workout.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <FormControl fullWidth className={classes.formControl}>
+                        <InputLabel htmlFor="age-auto-width">
+                          Exercise
+                        </InputLabel>
+                        <Select
+                          value={item.exercise}
+                          onChange={event => this.handleChange(event, index)}
+                          input={<Input name="exercise" id="age-auto-width" />}
+                        >
+                          {this.props.exercises.items.map((exercise, index) => (
                             <MenuItem key={index} value={exercise.name}>
                               {exercise.name}
                             </MenuItem>
-                          )
-                        )}
-                      </Select>
-                    </FormControl>
-                  </TableCell>
-                  <TableCell>
-                    <CustomInput
-                      labelText="Repeats"
-                      id="exerciseName"
-                      formControlProps={{ fullWidth: true }}
-                      inputProps={{
-                        min: 0,
-                        name: "repeats",
-                        onChange: event => this.handleChange(event, index),
-                        type: "number",
-                        value: item.repeats
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <CustomInput
-                      labelText="Measurement"
-                      id="exerciseName"
-                      formControlProps={{ fullWidth: true }}
-                      inputProps={{
-                        name: "measurement",
-                        onChange: event => this.handleChange(event, index),
-                        type: "number",
-                        value: item.measurement
-                      }}
-                    />
-                    <span>
-                      {this.props.exercises.items.find(
-                        exercise => exercise.name === item.exercise
-                      ) === "kilograms"
-                        ? "kg"
-                        : this.props.exercises.items.find(
-                            exercise => exercise.name === item.exercise
-                          ) === "minutes"
-                        ? "min"
-                          : this.props.exercises.items.find(
-                            exercise => exercise.name === item.exercise
-                          ) === "meters"
-                        ? "m"
-                        : null}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton className={classes.button}>
-                      <ArrowUpwardOutlined />
-                    </IconButton>
-                    <IconButton className={classes.button}>
-                      <ArrowDownwardOutlined />
-                    </IconButton>
-                    <IconButton className={classes.button}>
-                      <CancelOutlined />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardBody>
-        <CardFooter>
-          <Button color="primary">Update workout</Button>
-        </CardFooter>
-      </Card>;
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </TableCell>
+                    <TableCell>
+                      <CustomInput
+                        labelText="Repeats"
+                        id="exerciseName"
+                        formControlProps={{ fullWidth: true }}
+                        inputProps={{
+                          min: 0,
+                          name: "repeats",
+                          onChange: event => this.handleChange(event, index),
+                          type: "number",
+                          value: item.repeats
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <CustomInput
+                        labelText="Measurement"
+                        id="exerciseName"
+                        formControlProps={{ fullWidth: true }}
+                        inputProps={{
+                          name: "measurement",
+                          onChange: event => this.handleChange(event, index),
+                          type: "number",
+                          value: item.measurement
+                        }}
+                      />
+                      <span>{item.measurementType}</span>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        className={classes.button}
+                        onClick={event => this.moveUp(event, index)}
+                      >
+                        <ArrowUpwardOutlined />
+                      </IconButton>
+                      <IconButton
+                        className={classes.button}
+                        onClick={event => this.moveDown(event, index)}
+                      >
+                        <ArrowDownwardOutlined />
+                      </IconButton>
+                      <IconButton
+                        className={classes.button}
+                        onClick={() =>
+                          this.setState({
+                            openModal: true,
+                            exIndex: index
+                          })
+                        }
+                      >
+                        <CancelOutlined />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardBody>
+          <CardFooter>
+            <Button onClick={() => console.log(this.state.workout)} color="primary">
+              Update workout
+            </Button>
+          </CardFooter>
+        </Card>
+      </React.Fragment>
+    );
   }
 }
 
