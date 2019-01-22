@@ -74,14 +74,16 @@ class WorkoutComponent extends React.Component {
   state = {
     openModal: false,
     exIndex: null,
-    workout: [{ exercise: "", repeats: 0, measurement: 0, measurementType: "" }]
+    workout: [
+      { exerciseId: "", repeats: 0, measurement: 0, measurementType: "" }
+    ]
   };
 
   addExercise = () => {
     this.setState({
       workout: [
         ...this.state.workout,
-        { exercise: "", repeats: 0, measurement: 0, measurementType: "" }
+        { exerciseId: "", repeats: 0, measurement: 0, measurementType: "" }
       ]
     });
   };
@@ -91,18 +93,12 @@ class WorkoutComponent extends React.Component {
       target: { value, name }
     } = event;
 
-    //const { workout } = this.state;
-
-    /* this.setState({
-      workout: [...workout, { ...workout[index], exercise: value }]
-    }); */
-
     this.setState(state => {
       const newWorkout = clone(state.workout);
       newWorkout[index][name] = value;
-      if (name === "exercise") {
+      if (name === "exerciseId") {
         const exercise = this.props.exercises.items.find(
-          item => item.name === value
+          item => item.id === value
         );
         switch (exercise.measurement) {
           case "kilograms":
@@ -177,7 +173,7 @@ class WorkoutComponent extends React.Component {
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
-          open={this.state.openModal} /* onClose={this.handleClose} */
+          open={this.state.openModal}
         >
           <div style={styles.modalStyles}>
             <p>Are you sure wanna delete this exercise?</p>
@@ -214,12 +210,14 @@ class WorkoutComponent extends React.Component {
                           Exercise
                         </InputLabel>
                         <Select
-                          value={item.exercise}
+                          value={item.exerciseId}
                           onChange={event => this.handleChange(event, index)}
-                          input={<Input name="exercise" id="age-auto-width" />}
+                          input={
+                            <Input name="exerciseId" id="age-auto-width" />
+                          }
                         >
                           {this.props.exercises.items.map((exercise, index) => (
-                            <MenuItem key={index} value={exercise.name}>
+                            <MenuItem key={index} value={exercise.id}>
                               {exercise.name}
                             </MenuItem>
                           ))}
@@ -285,7 +283,10 @@ class WorkoutComponent extends React.Component {
             </Table>
           </CardBody>
           <CardFooter>
-            <Button onClick={() => console.log(this.state.workout)} color="primary">
+            <Button
+              onClick={() => console.log(this.state.workout)}
+              color="primary"
+            >
               Update workout
             </Button>
           </CardFooter>

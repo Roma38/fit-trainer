@@ -32,7 +32,7 @@ const dashboardRoutes = [
     component: EditExercises
   },
   {
-    path: "/new-workout",
+    path: "/new-workout/:date",
     sidebarName: "New Workout",
     navbarName: "New Workout",
     icon: LibraryBooks,

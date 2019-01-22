@@ -5,19 +5,16 @@
       {
         "exercise": "Exercise #2",
         "measurement": "5",
-        "measurementType": "min",
         "repeats": "3"
       },
       {
         "exercise": "Exercise #1",
         "measurement": "6",
-        "measurementType": "kg",
         "repeats": "2"
       },
       {
         "exercise": "Exercise #3",
         "measurement": "3",
-        "measurementType": "m",
         "repeats": "6"
       }
     ]
@@ -26,21 +23,18 @@
     "date": 1550613600000,
     "programm": [
       {
-        "exercise": "Exercise #2",
+        "exerciseId": 2,
         "measurement": "5",
-        "measurementType": "min",
         "repeats": "3"
       },
       {
-        "exercise": "Exercise #1",
+        "exercise": 1,
         "measurement": "6",
-        "measurementType": "kg",
         "repeats": "2"
       },
       {
-        "exercise": "Exercise #3",
+        "exercise": 3,
         "measurement": "3",
-        "measurementType": "m",
         "repeats": "6"
       }
     ]
@@ -49,21 +43,18 @@
     "date": 1550872800000,
     "program": [
       {
-        "exercise": "Exercise #2",
+        "exercise": 2,
         "measurement": "5",
-        "measurementType": "min",
         "repeats": "3"
       },
       {
-        "exercise": "Exercise #1",
+        "exercise": 1,
         "measurement": "6",
-        "measurementType": "kg",
         "repeats": "2"
       },
       {
-        "exercise": "Exercise #3",
+        "exercise": 3,
         "measurement": "3",
-        "measurementType": "m",
         "repeats": "6"
       }
     ]

@@ -19,12 +19,14 @@ import {
 } from "../../redux/actions/workouts";
 import { axios } from "../../utils/axios/axios";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 import dashboardStyle from "../../assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 
 class DashboardComponent extends React.Component {
-  onSelect(val) {
+  onSelect = (val) => {
     console.log(val.getTime());
+    this.props.history.push(`/new-workout/${val.getTime()}`);
   }
 
   componentDidMount() {
@@ -73,4 +75,6 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(Dashboard);
+const DashboardWithRouter = withRouter(Dashboard);
+
+export default withStyles(dashboardStyle)(DashboardWithRouter);
