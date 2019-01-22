@@ -3,8 +3,18 @@ import workoutsFixture from "./fixture/get/workouts.json";
 
 const API_ENDPOINTS = {
   EXERCISES: "/exercises",
-  WORKOUTS: "/workouts"
+  WORKOUTS: "/workouts",
+  ADD_EXERCISE: "/add-exercise"
 };
+
+const generateId = array => {
+  if (array.length < 1) {
+    return 1;
+  }
+
+  const idArray = array.map(({ id }) => id);
+  return (Math.max(...idArray) + 1);
+}
 
 axios.get = function(url) {
   return new Promise((resolve, reject) => {
@@ -23,8 +33,18 @@ axios.get = function(url) {
   });
 };
 
-axios.post = function(url) {
-  return new Promise();
+axios.post = function(url, data) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      switch (url) {
+        case API_ENDPOINTS.ADD_EXERCISE:
+          resolve({...data, id: generateId(exercisesFixture)});
+          break;
+        default:
+          break;
+      }
+    }, 1000);
+  });
 };
 
 export function axios() {}

@@ -13,6 +13,9 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
+import Paper from "@material-ui/core/Paper";
+
+import { axios } from "../../utils/axios/axios";
 
 const styles = {
   cardCategoryWhite: {
@@ -30,55 +33,117 @@ const styles = {
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
     textDecoration: "none"
+  },
+  alert: {
+    position: "absolute",
+    right: "20px",
+    top: "40px",
+    padding: "0 15px"
   }
 };
 
 class NewExercise extends React.Component {
   state = {
-    exerciseName: "",
-    measurement: ""
+    newExercise: { exerciseName: "", measurement: "" },
+    alert: { display: "none", isPositive: null }
   };
 
   handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({
+      newExercise: {
+        ...this.state.newExercise,
+        [event.target.name]: event.target.value
+      }
+    });
   };
+
+  addExercise = () => {
+    axios
+      .post("/add-exercise", { ...this.state.newExercise })
+      .then(response => {
+        console.log(response);
+        this.showAlert(true);
+      })
+      .catch(error => {
+        console.log(error);
+        this.showAlert(false);
+      });
+  };
+
+  showAlert = isPositive => {
+    this.setState({ alert: { display: "block", isPositive } });
+    setTimeout(() => {
+      this.setState({
+        alert: { display: "none", isPositive: null },
+        newExercise: { exerciseName: "", measurement: "" }
+      });
+    }, 2000);
+  };
+
+  componentDidMount() {
+    console.log;
+  }
 
   render() {
     const { classes } = this.props;
+    const { alert } = this.state;
     return (
-      <Card>
-        <CardHeader color="primary">
-          <h4 className={classes.cardTitleWhite}>Create new exercise</h4>
-          <p className={classes.cardCategoryWhite}>
-            Please, add a new exercise name and measurement type
+      <React.Fragment>
+        <Paper
+          className={classes.alert}
+          elevation={1}
+          style={{
+            display: alert.display,
+            color: alert.isPositive ? "green" : "red"
+          }}
+        >
+          <p>
+            {alert.isPositive
+              ? "Your exercise was successfuly added"
+              : "Oops, something went wrong"}
           </p>
-        </CardHeader>
-        <CardBody>
-          <form className={classes.root} autoComplete="off">
-            <CustomInput
-              labelText="Exercise Name"
-              id="exerciseName"
-              formControlProps={{ fullWidth: true }}
-              inputProps={{ name: "exerciseName", onChange: this.handleChange }}
-            />
-            <FormControl fullWidth className={classes.formControl}>
-              <InputLabel htmlFor="age-auto-width">Measurement type</InputLabel>
-              <Select
-                value={this.state.measurement}
-                onChange={this.handleChange}
-                input={<Input name="measurement" id="age-auto-width" />}
-              >
-                <MenuItem value="kilograms">kilograms</MenuItem>
-                <MenuItem value="meters">meters</MenuItem>
-                <MenuItem value="minutes">minutes</MenuItem>
-              </Select>
-            </FormControl>
-          </form>
-        </CardBody>
-        <CardFooter>
-          <Button color="primary">Create exercise</Button>
-        </CardFooter>
-      </Card>
+        </Paper>
+        <Card>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Create new exercise</h4>
+            <p className={classes.cardCategoryWhite}>
+              Please, add a new exercise name and measurement type
+            </p>
+          </CardHeader>
+          <CardBody>
+            <form className={classes.root} autoComplete="off">
+              <CustomInput
+                labelText="Exercise Name"
+                id="exerciseName"
+                formControlProps={{ fullWidth: true }}
+                inputProps={{
+                  name: "exerciseName",
+                  onChange: this.handleChange
+                }}
+              />
+              <FormControl fullWidth className={classes.formControl}>
+                <InputLabel htmlFor="age-auto-width">
+                  Measurement type
+                </InputLabel>
+                <Select
+                  value={this.state.newExercise.measurement}
+                  onChange={this.handleChange}
+                  input={<Input name="measurement" id="age-auto-width" />}
+                >
+                  <MenuItem value="kilograms">kilograms</MenuItem>
+                  <MenuItem value="meters">meters</MenuItem>
+                  <MenuItem value="minutes">minutes</MenuItem>
+                </Select>
+              </FormControl>
+            </form>
+          </CardBody>
+          <CardFooter>
+            <Button onClick={this.addExercise} color="primary">
+              Create exercise
+            </Button>
+          </CardFooter>
+        </Card>
+      </React.Fragment>
     );
   }
 }
