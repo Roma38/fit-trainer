@@ -4,7 +4,8 @@ import workoutsFixture from "./fixture/get/workouts.json";
 const API_ENDPOINTS = {
   EXERCISES: "/exercises",
   WORKOUTS: "/workouts",
-  ADD_EXERCISE: "/add-exercise"
+  ADD_EXERCISE: "/add-exercise",
+  UPDATE_EXERCISES: "/update-exercises"
 };
 
 const generateId = array => {
@@ -38,7 +39,10 @@ axios.post = function(url, data) {
     setTimeout(() => {
       switch (url) {
         case API_ENDPOINTS.ADD_EXERCISE:
-          resolve({...data, id: generateId(exercisesFixture)});
+          resolve({ ...data, id: generateId(exercisesFixture) });
+          break;
+        case API_ENDPOINTS.UPDATE_EXERCISES:
+          resolve("ok");
           break;
         default:
           break;

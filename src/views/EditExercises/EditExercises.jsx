@@ -23,6 +23,8 @@ import Button from "../../components/CustomButtons/Button";
 import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined.js";
 import ArrowDownwardOutlined from "@material-ui/icons/ArrowDownwardOutlined.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
+import Paper from "@material-ui/core/Paper";
+
 
 import { connect } from "react-redux";
 import {
@@ -68,6 +70,12 @@ const styles = {
     /* boxShadow: theme.shadows[5], */
     padding: "15px",
     outline: "none"
+  },
+  alert: {
+    position: "absolute",
+    right: "20px",
+    top: "40px",
+    padding: "0 15px"
   }
 };
 
@@ -75,7 +83,8 @@ class EditExercisesComponent extends React.Component {
   state = {
     exercises: [],
     openModal: false,
-    exIndex: null
+    exIndex: null,
+    alert: { display: "none", isPositive: null }
   };
 
   handleChange = (event, index) => {
@@ -138,6 +147,30 @@ class EditExercisesComponent extends React.Component {
     });
   };
 
+  updateExercises = () => {
+    axios
+      .post("/update-exercises", this.state.exercises)
+      .then(response => {
+        console.log(response);
+        this.props.exercisesLoadSucceed(this.state.exercises);
+        this.showAlert(true);
+      })
+      .catch(error => {
+        console.log(error);
+        this.showAlert(false);
+      });
+  };
+
+  showAlert = isPositive => {
+    this.setState({ alert: { display: "block", isPositive } });
+    setTimeout(() => {
+      this.setState({
+        alert: { display: "none", isPositive: null },
+        newExercise: { exerciseName: "", measurement: "" }
+      });
+    }, 2000);
+  };
+
   componentDidMount() {
     const { exercisesLoadStart, exercisesLoadSucceed } = this.props;
     exercisesLoadStart();
@@ -147,13 +180,31 @@ class EditExercisesComponent extends React.Component {
         exercisesLoadSucceed(exercises);
         this.setState({ exercises });
       })
-      .catch(error => { console.log(error) });
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   render() {
     const { classes } = this.props;
+    const { alert } = this.state;
+
     return (
       <React.Fragment>
+        <Paper
+          className={classes.alert}
+          elevation={1}
+          style={{
+            display: alert.display,
+            color: alert.isPositive ? "green" : "red"
+          }}
+        >
+          <p>
+            {alert.isPositive
+              ? "Your exercises was successfuly updated"
+              : "Oops, something went wrong"}
+          </p>
+        </Paper>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -245,7 +296,9 @@ class EditExercisesComponent extends React.Component {
               </TableBody>
             </Table>
             <CardFooter>
-              <Button color="primary">Save exercises</Button>
+              <Button onClick={this.updateExercises} color="primary">
+                Update exercises
+              </Button>
             </CardFooter>
           </CardBody>
         </Card>

@@ -80,10 +80,6 @@ class NewExercise extends React.Component {
     }, 2000);
   };
 
-  componentDidMount() {
-    console.log;
-  }
-
   render() {
     const { classes } = this.props;
     const { alert } = this.state;
