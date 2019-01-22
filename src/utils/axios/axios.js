@@ -5,7 +5,8 @@ const API_ENDPOINTS = {
   EXERCISES: "/exercises",
   WORKOUTS: "/workouts",
   ADD_EXERCISE: "/add-exercise",
-  UPDATE_EXERCISES: "/update-exercises"
+  UPDATE_EXERCISES: "/update-exercises",
+  ADD_WORKOUT: "/add-workout"
 };
 
 const generateId = array => {
@@ -14,8 +15,8 @@ const generateId = array => {
   }
 
   const idArray = array.map(({ id }) => id);
-  return (Math.max(...idArray) + 1);
-}
+  return Math.max(...idArray) + 1;
+};
 
 axios.get = function(url) {
   return new Promise((resolve, reject) => {
@@ -44,6 +45,11 @@ axios.post = function(url, data) {
         case API_ENDPOINTS.UPDATE_EXERCISES:
           resolve("ok");
           break;
+        case API_ENDPOINTS.ADD_WORKOUT:
+          console.log(data);
+          resolve("ok");
+          break;
+
         default:
           break;
       }

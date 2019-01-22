@@ -71,11 +71,13 @@ class NewExercise extends React.Component {
   };
 
   showAlert = isPositive => {
-    this.setState({ alert: { display: "block", isPositive } });
+    this.setState({
+      alert: { display: "block", isPositive },
+      newExercise: { exerciseName: "", measurement: "" }
+    });
     setTimeout(() => {
       this.setState({
-        alert: { display: "none", isPositive: null },
-        newExercise: { exerciseName: "", measurement: "" }
+        alert: { display: "none", isPositive: null }
       });
     }, 2000);
   };
@@ -114,7 +116,8 @@ class NewExercise extends React.Component {
                 formControlProps={{ fullWidth: true }}
                 inputProps={{
                   name: "exerciseName",
-                  onChange: this.handleChange
+                  onChange: this.handleChange,
+                  value: this.state.newExercise.exerciseName
                 }}
               />
               <FormControl fullWidth className={classes.formControl}>

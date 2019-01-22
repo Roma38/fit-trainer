@@ -19,6 +19,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined.js";
 import ArrowDownwardOutlined from "@material-ui/icons/ArrowDownwardOutlined.js";
+import CheckCircle from "@material-ui/icons/CheckCircle.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
 import Button from "../../components/CustomButtons/Button";
 import Modal from "@material-ui/core/Modal";
@@ -154,6 +155,9 @@ class WorkoutComponent extends React.Component {
   };
 
   componentDidMount() {
+    console.log("date: " + this.props.match.params.date);
+    console.log(this.props.location);
+    
     const { exercisesLoadStart, exercisesLoadSucceed } = this.props;
     exercisesLoadStart();
     axios
@@ -178,7 +182,7 @@ class WorkoutComponent extends React.Component {
           <div style={styles.modalStyles}>
             <p>Are you sure wanna delete this exercise?</p>
             <IconButton onClick={this.delExercise}>
-              <CancelOutlined />
+              <CheckCircle />
             </IconButton>
             <IconButton
               onClick={() =>

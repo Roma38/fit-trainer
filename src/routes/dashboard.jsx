@@ -7,7 +7,8 @@ import LibraryBooks from "@material-ui/icons/LibraryBooks";
 import DashboardPage from "../views/Dashboard/Dashboard.jsx";
 import NewExercise from "../views/NewExercise/NewExercise.jsx";
 import EditExercises from "../views/EditExercises/EditExercises.jsx";
-import Workout from "../views/Workout/Workout.jsx";
+import NewWorkout from "../views/NewWorkout/NewWorkout.jsx";
+import EditWorkout from "../views/EditWorkout/EditWorkout.jsx";
 
 const dashboardRoutes = [
   {
@@ -36,14 +37,14 @@ const dashboardRoutes = [
     sidebarName: "New Workout",
     navbarName: "New Workout",
     icon: LibraryBooks,
-    component: Workout
+    component: NewWorkout
   },
   {
-    path: "/edit-workout",
+    path: "/edit-workout/:date",
     sidebarName: "Edit Workout",
     navbarName: "Edit Workout",
     icon: LibraryBooks,
-    component: Workout
+    component: EditWorkout
   },
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];

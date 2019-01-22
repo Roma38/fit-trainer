@@ -24,10 +24,13 @@ import { withRouter } from "react-router-dom";
 import dashboardStyle from "../../assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 
 class DashboardComponent extends React.Component {
-  onSelect = (val) => {
-    console.log(val.getTime());
-    this.props.history.push(`/new-workout/${val.getTime()}`);
-  }
+  onSelect = val => {
+    const date = val.getTime();
+    const dateArray = this.props.workouts.items.map(item => item.date);
+    dateArray.includes(date)
+      ? this.props.history.push(`/edit-workout/${date}`)
+      : this.props.history.push(`/new-workout/${date}`);
+  };
 
   componentDidMount() {
     const { workoutsLoadStart, workoutsLoadSucceed } = this.props;

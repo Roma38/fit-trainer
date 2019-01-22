@@ -2,7 +2,6 @@ import React from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 // core components
-/* import Table from "../../components/Table/Table"; */
 import Card from "../../components/Card/Card";
 import CardHeader from "../../components/Card/CardHeader";
 import CardBody from "../../components/Card/CardBody";
@@ -12,18 +11,18 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import CustomInput from "../../components/CustomInput/CustomInput";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
-import Modal from "@material-ui/core/Modal";
+import Select from "@material-ui/core/Select";
+import Input from "@material-ui/core/Input";
+import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
-import Button from "../../components/CustomButtons/Button";
 import ArrowUpwardOutlined from "@material-ui/icons/ArrowUpwardOutlined.js";
 import ArrowDownwardOutlined from "@material-ui/icons/ArrowDownwardOutlined.js";
-import CheckOutlined from "@material-ui/icons/CheckOutlined.js";
+import CheckCircle from "@material-ui/icons/CheckCircle.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
+import Button from "../../components/CustomButtons/Button";
+import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
 
 import { connect } from "react-redux";
@@ -32,8 +31,9 @@ import {
   exercisesLoadSucceed,
   exercisesLoadFailed
 } from "../../redux/actions/exercises";
-import clone from "clone";
+import { addWorkout } from "../../redux/actions/workouts";
 import { axios } from "../../utils/axios/axios";
+import clone from "clone";
 
 const styles = {
   cardCategoryWhite: {
@@ -79,12 +79,40 @@ const styles = {
   }
 };
 
-class EditExercisesComponent extends React.Component {
+class WorkoutComponent extends React.Component {
   state = {
-    exercises: [],
     openModal: false,
     exIndex: null,
-    alert: { display: "none", isPositive: null }
+    alert: { display: "none", isPositive: null },
+    workout: [{ exerciseId: "", repeats: 0, measurement: 0 }]
+  };
+
+  addExercise = () => {
+    this.setState({
+      workout: [
+        ...this.state.workout,
+        { exerciseId: "", repeats: 0, measurement: 0 }
+      ]
+    });
+  };
+
+  getMeasureType = exerciseId => {
+    if (!exerciseId) {
+      return null;
+    }
+    const exercise = this.props.exercises.items.find(
+      item => item.id === exerciseId
+    );
+    switch (exercise.measurement) {
+      case "kilograms":
+        return "kg";
+      case "meters":
+        return "m";
+      case "minutes":
+        return "min";
+      default:
+        break;
+    }
   };
 
   handleChange = (event, index) => {
@@ -93,72 +121,63 @@ class EditExercisesComponent extends React.Component {
     } = event;
 
     this.setState(state => {
-      const newExercises = clone(state.exercises);
-      newExercises[index][name] = value;
-      return {
-        ...state,
-        exercises: newExercises
-      };
+      const newWorkout = clone(state.workout);
+      newWorkout[index][name] = value;
+      /* if (name === "exerciseId") {
+        const exercise = this.props.exercises.items.find(
+          item => item.id === value
+        );
+        switch (exercise.measurement) {
+          case "kilograms":
+            newWorkout[index].measurementType = "kg";
+            break;
+          case "meters":
+            newWorkout[index].measurementType = "m";
+            break;
+          case "minutes":
+            newWorkout[index].measurementType = "min";
+            break;
+
+          default:
+            break;
+        }
+      } */
+      return { ...state, workout: newWorkout };
+    });
+  };
+
+  delExercise = () => {
+    this.setState(state => {
+      const newWorkout = clone(state.workout);
+      newWorkout.splice(state.exIndex, 1);
+      return { ...state, workout: newWorkout, openModal: false, exIndex: null };
     });
   };
 
   moveUp = (event, index) => {
     if (index !== 0) {
       this.setState(state => {
-        const newExercises = clone(state.exercises);
-        [newExercises[index], newExercises[index - 1]] = [
-          newExercises[index - 1],
-          newExercises[index]
+        const newWorkout = clone(state.workout);
+        [newWorkout[index], newWorkout[index - 1]] = [
+          newWorkout[index - 1],
+          newWorkout[index]
         ];
-        return {
-          ...state,
-          exercises: newExercises
-        };
+        return { ...state, workout: newWorkout };
       });
     }
   };
 
   moveDown = (event, index) => {
-    if (index !== this.state.exercises.length - 1) {
+    if (index !== this.state.workout.length - 1) {
       this.setState(state => {
-        const newExercises = clone(state.exercises);
-        [newExercises[index], newExercises[index + 1]] = [
-          newExercises[index + 1],
-          newExercises[index]
+        const newWorkout = clone(state.workout);
+        [newWorkout[index], newWorkout[index + 1]] = [
+          newWorkout[index + 1],
+          newWorkout[index]
         ];
-        return {
-          ...state,
-          exercises: newExercises
-        };
+        return { ...state, workout: newWorkout };
       });
     }
-  };
-
-  delExercise = () => {
-    this.setState(state => {
-      const newExercises = clone(state.exercises);
-      newExercises.splice(state.exIndex, 1);
-      return {
-        ...state,
-        exercises: newExercises,
-        openModal: false,
-        exIndex: null
-      };
-    });
-  };
-
-  updateExercises = () => {
-    axios
-      .post("/update-exercises", this.state.exercises)
-      .then(response => {
-        console.log(response);
-        this.props.exercisesLoadSucceed(this.state.exercises);
-        this.showAlert(true);
-      })
-      .catch(error => {
-        console.log(error);
-        this.showAlert(false);
-      });
   };
 
   showAlert = isPositive => {
@@ -171,18 +190,42 @@ class EditExercisesComponent extends React.Component {
     }, 2000);
   };
 
+  createWorkout = () => {
+    const workout = {
+      date: this.props.match.params.date,
+      program: this.state.workout
+    };
+    axios
+      .post("/add-workout", workout)
+      .then(response => {
+        console.log(response);
+        this.props.addWorkout(workout);
+        this.showAlert(true);
+      })
+      .catch(error => {
+        console.log(error);
+        this.showAlert(false);
+      });
+  };
+
   componentDidMount() {
-    const { exercisesLoadStart, exercisesLoadSucceed, exercisesLoadFailed } = this.props;
+    console.log("date: " + this.props.match.params.date);
+    console.log(this.props.location);
+
+    const {
+      exercisesLoadStart,
+      exercisesLoadSucceed,
+      exercisesLoadFailed
+    } = this.props;
     exercisesLoadStart();
     axios
       .get("/exercises")
       .then(exercises => {
         exercisesLoadSucceed(exercises);
-        this.setState({ exercises });
       })
       .catch(error => {
-        console.log(error);
         exercisesLoadFailed(error);
+        console.log(error);
       });
   }
 
@@ -209,12 +252,12 @@ class EditExercisesComponent extends React.Component {
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
-          open={this.state.openModal} /* onClose={this.handleClose} */
+          open={this.state.openModal}
         >
           <div style={styles.modalStyles}>
             <p>Are you sure wanna delete this exercise?</p>
             <IconButton onClick={this.delExercise}>
-              <CheckOutlined />
+              <CheckCircle />
             </IconButton>
             <IconButton
               onClick={() =>
@@ -230,42 +273,63 @@ class EditExercisesComponent extends React.Component {
         </Modal>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Edit exercises</h4>
+            <h4 className={classes.cardTitleWhite}>New workout</h4>
           </CardHeader>
           <CardBody>
+            <Button onClick={this.addExercise} color="primary">
+              Add exercise
+            </Button>
             <Table>
               <TableBody>
-                {this.state.exercises.map((exercise, index) => (
-                  <TableRow key={exercise.id}>
+                {this.state.workout.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <FormControl fullWidth className={classes.formControl}>
+                        <InputLabel htmlFor="age-auto-width">
+                          Exercise
+                        </InputLabel>
+                        <Select
+                          value={item.exerciseId}
+                          onChange={event => this.handleChange(event, index)}
+                          input={
+                            <Input name="exerciseId" id="age-auto-width" />
+                          }
+                        >
+                          {this.props.exercises.items.map((exercise, index) => (
+                            <MenuItem key={index} value={exercise.id}>
+                              {exercise.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </TableCell>
                     <TableCell>
                       <CustomInput
-                        labelText="Exercise Name"
-                        id={`exercise-name-${exercise.id}`}
+                        labelText="Repeats"
+                        id="exerciseName"
                         formControlProps={{ fullWidth: true }}
                         inputProps={{
-                          name: "name",
+                          min: 0,
+                          name: "repeats",
                           onChange: event => this.handleChange(event, index),
-                          value: exercise.name
+                          type: "number",
+                          value: item.repeats
                         }}
                       />
                     </TableCell>
                     <TableCell>
-                      <FormControl className={classes.formControl} fullWidth>
-                        <InputLabel htmlFor="age-auto-width">
-                          Measurement
-                        </InputLabel>
-                        <Select
-                          value={exercise.measurement}
-                          onChange={event => this.handleChange(event, index)}
-                          input={
-                            <Input name="measurement" id="age-auto-width" />
-                          }
-                        >
-                          <MenuItem value="kilograms">kilograms</MenuItem>
-                          <MenuItem value="meters">meters</MenuItem>
-                          <MenuItem value="minutes">minutes</MenuItem>
-                        </Select>
-                      </FormControl>
+                      <CustomInput
+                        labelText="Measurement"
+                        id="exerciseName"
+                        formControlProps={{ fullWidth: true }}
+                        inputProps={{
+                          name: "measurement",
+                          onChange: event => this.handleChange(event, index),
+                          type: "number",
+                          value: item.measurement
+                        }}
+                      />
+                      <span>{this.getMeasureType(item.exerciseId)}</span>
                     </TableCell>
                     <TableCell>
                       <IconButton
@@ -296,12 +360,12 @@ class EditExercisesComponent extends React.Component {
                 ))}
               </TableBody>
             </Table>
-            <CardFooter>
-              <Button onClick={this.updateExercises} color="primary">
-                Update exercises
-              </Button>
-            </CardFooter>
           </CardBody>
+          <CardFooter>
+            <Button onClick={this.createWorkout} color="primary">
+              Create workout
+            </Button>
+          </CardFooter>
         </Card>
       </React.Fragment>
     );
@@ -313,12 +377,13 @@ const mapStateToProps = ({ exercises }) => ({ exercises });
 const mapDispatchToProps = dispatch => ({
   exercisesLoadStart: () => dispatch(exercisesLoadStart()),
   exercisesLoadSucceed: exercises => dispatch(exercisesLoadSucceed(exercises)),
-  exercisesLoadFailed: error => dispatch(exercisesLoadFailed(error))
+  exercisesLoadFailed: error => dispatch(exercisesLoadFailed(error)),
+  addWorkout: workout => dispatch(addWorkout(workout))
 });
 
-const EditExercises = connect(
+const Workout = connect(
   mapStateToProps,
   mapDispatchToProps
-)(EditExercisesComponent);
+)(WorkoutComponent);
 
-export default withStyles(styles)(EditExercises);
+export default withStyles(styles)(Workout);
