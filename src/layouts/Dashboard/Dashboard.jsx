@@ -80,19 +80,35 @@ class App extends React.Component {
           {...rest}
         />
         <div className={classes.mainPanel} ref="mainPanel">
-          <Header
-            routes={dashboardRoutes}
-            handleDrawerToggle={this.handleDrawerToggle}
-            {...rest}
-          />
+          <Switch>
+            {dashboardRoutes.map((prop, key) => {
+              if (prop.redirect) return null;
+
+              return (
+                <Route
+                  path={prop.path}
+                  render={routerProps => {
+                    return (
+                      <Header
+                        routes={dashboardRoutes}
+                        handleDrawerToggle={this.handleDrawerToggle}
+                        {...routerProps}
+                      />
+                    );
+                  }}
+                  key={key}
+                />
+              );
+            })}
+          </Switch>
           {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
           {this.getRoute() ? (
             <div className={classes.content}>
               <div className={classes.container}>{switchRoutes}</div>
             </div>
           ) : (
-              <div className={classes.map}>{switchRoutes}</div>
-            )}
+            <div className={classes.map}>{switchRoutes}</div>
+          )}
           {this.getRoute() ? <Footer /> : null}
         </div>
       </div>

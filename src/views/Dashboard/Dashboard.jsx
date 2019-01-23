@@ -38,6 +38,7 @@ class DashboardComponent extends React.Component {
     axios
       .get("/workouts")
       .then(workouts => {
+        console.log("workouts:", workouts);
         workoutsLoadSucceed(workouts);
       })
       .catch(error => {

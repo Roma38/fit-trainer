@@ -32,6 +32,8 @@ import {
 } from "../../redux/actions/exercises";
 import { axios } from "../../utils/axios/axios";
 import clone from "clone";
+import { withRouter } from "react-router-dom";
+
 
 const styles = {
   cardCategoryWhite: {
@@ -71,7 +73,7 @@ const styles = {
   }
 };
 
-class WorkoutComponent extends React.Component {
+class EditWorkoutComponent extends React.Component {
   state = {
     openModal: false,
     exIndex: null,
@@ -155,9 +157,9 @@ class WorkoutComponent extends React.Component {
   };
 
   componentDidMount() {
-    console.log("date: " + this.props.match.params.date);
-    console.log(this.props.location);
-
+    if (this.props.match.params.date === ":date") {
+      this.props.history.push(`/dashboard`);
+    }
     const { exercisesLoadStart, exercisesLoadSucceed } = this.props;
     exercisesLoadStart();
     axios
@@ -308,9 +310,11 @@ const mapDispatchToProps = dispatch => ({
   exercisesLoadFailed: error => dispatch(exercisesLoadFailed(error))
 });
 
-const Workout = connect(
+const EditWorkout = connect(
   mapStateToProps,
   mapDispatchToProps
-)(WorkoutComponent);
+)(EditWorkoutComponent);
 
-export default withStyles(styles)(Workout);
+const EditWorkoutWithRouter = withRouter(EditWorkout);
+
+export default withStyles(styles)(EditWorkoutWithRouter);

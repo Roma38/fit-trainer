@@ -34,6 +34,8 @@ import {
 import { addWorkout } from "../../redux/actions/workouts";
 import { axios } from "../../utils/axios/axios";
 import clone from "clone";
+import { withRouter } from "react-router-dom";
+
 
 const styles = {
   cardCategoryWhite: {
@@ -79,7 +81,7 @@ const styles = {
   }
 };
 
-class WorkoutComponent extends React.Component {
+class NewWorkoutComponent extends React.Component {
   state = {
     openModal: false,
     exIndex: null,
@@ -192,7 +194,7 @@ class WorkoutComponent extends React.Component {
 
   createWorkout = () => {
     const workout = {
-      date: this.props.match.params.date,
+      date: +this.props.match.params.date,
       program: this.state.workout
     };
     axios
@@ -209,9 +211,9 @@ class WorkoutComponent extends React.Component {
   };
 
   componentDidMount() {
-    console.log("date: " + this.props.match.params.date);
-    console.log(this.props.location);
-
+    if (this.props.match.params.date === ":date") {
+      this.props.history.push(`/dashboard`);
+    }
     const {
       exercisesLoadStart,
       exercisesLoadSucceed,
@@ -381,9 +383,11 @@ const mapDispatchToProps = dispatch => ({
   addWorkout: workout => dispatch(addWorkout(workout))
 });
 
-const Workout = connect(
+const NewWorkout = connect(
   mapStateToProps,
   mapDispatchToProps
-)(WorkoutComponent);
+)(NewWorkoutComponent);
 
-export default withStyles(styles)(Workout);
+const NewWorkoutWithRouter = withRouter(NewWorkout);
+
+export default withStyles(styles)(NewWorkoutWithRouter);
