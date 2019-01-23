@@ -9,8 +9,10 @@ import NewExercise from "../views/NewExercise/NewExercise.jsx";
 import EditExercises from "../views/EditExercises/EditExercises.jsx";
 import NewWorkout from "../views/NewWorkout/NewWorkout.jsx";
 import EditWorkout from "../views/EditWorkout/EditWorkout.jsx";
+import SignIn from "../views/SignIn/SignIn.jsx";
 
-const dashboardRoutes = [
+
+/* const dashboardRoutes = [
   {
     path: "/dashboard",
     sidebarName: "Dashboard",
@@ -48,5 +50,22 @@ const dashboardRoutes = [
   },
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];
-
+ */
+const dashboardRoutes = [
+  {
+    path: "/sign-in",
+    sidebarName: "Sign in",
+    navbarName: "Sign in",
+    icon: LibraryBooks,
+    component: SignIn
+  },
+  {
+    path: "/sign-up",
+    sidebarName: "Sign up",
+    navbarName: "Sign up",
+    icon: LibraryBooks,
+    component: SignIn
+  },
+  { redirect: true, path: "/", to: "/sign-in", navbarName: "Redirect" }
+];
 export default dashboardRoutes;

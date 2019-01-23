@@ -1,5 +1,6 @@
-import exercisesFixture from "./fixture/get/exercises.json";
-import workoutsFixture from "./fixture/get/workouts.json";
+import exercisesFixture from "./fixture/exercises.json";
+import workoutsFixture from "./fixture/workouts.json";
+import usersFixture from "./fixture/users.json";
 
 const API_ENDPOINTS = {
   EXERCISES: "/exercises",
@@ -7,7 +8,9 @@ const API_ENDPOINTS = {
   ADD_EXERCISE: "/add-exercise",
   UPDATE_EXERCISES: "/update-exercises",
   ADD_WORKOUT: "/add-workout",
-  UPDATE_WORKOUT: "/update-workout"
+  UPDATE_WORKOUT: "/update-workout",
+  SIGN_IN: "/sign-in",
+  SIGN_UP: "/sign-up"
 };
 
 const generateId = array => {
@@ -50,6 +53,9 @@ axios.post = function(url, data) {
           resolve("ok");
           break;
         case API_ENDPOINTS.UPDATE_WORKOUT:
+          resolve("ok");
+          break;
+        case API_ENDPOINTS.SIGN_IN:
           resolve("ok");
           break;
 
