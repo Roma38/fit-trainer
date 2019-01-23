@@ -36,7 +36,6 @@ import { axios } from "../../utils/axios/axios";
 import clone from "clone";
 import { withRouter } from "react-router-dom";
 
-
 const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
@@ -125,25 +124,6 @@ class NewWorkoutComponent extends React.Component {
     this.setState(state => {
       const newWorkout = clone(state.workout);
       newWorkout[index][name] = value;
-      /* if (name === "exerciseId") {
-        const exercise = this.props.exercises.items.find(
-          item => item.id === value
-        );
-        switch (exercise.measurement) {
-          case "kilograms":
-            newWorkout[index].measurementType = "kg";
-            break;
-          case "meters":
-            newWorkout[index].measurementType = "m";
-            break;
-          case "minutes":
-            newWorkout[index].measurementType = "min";
-            break;
-
-          default:
-            break;
-        }
-      } */
       return { ...state, workout: newWorkout };
     });
   };
@@ -200,7 +180,6 @@ class NewWorkoutComponent extends React.Component {
     axios
       .post("/add-workout", workout)
       .then(response => {
-        console.log(response);
         this.props.addWorkout(workout);
         this.showAlert(true);
       })
@@ -247,7 +226,7 @@ class NewWorkoutComponent extends React.Component {
         >
           <p>
             {alert.isPositive
-              ? "Your exercises was successfuly updated"
+              ? "Your workout was successfuly added"
               : "Oops, something went wrong"}
           </p>
         </Paper>

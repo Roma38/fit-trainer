@@ -23,6 +23,7 @@ import CheckCircle from "@material-ui/icons/CheckCircle.js";
 import CancelOutlined from "@material-ui/icons/CancelOutlined.js";
 import Button from "../../components/CustomButtons/Button";
 import Modal from "@material-ui/core/Modal";
+import Paper from "@material-ui/core/Paper";
 
 import { connect } from "react-redux";
 import {
@@ -30,10 +31,10 @@ import {
   exercisesLoadSucceed,
   exercisesLoadFailed
 } from "../../redux/actions/exercises";
+import { updateWorkout } from "../../redux/actions/workouts";
 import { axios } from "../../utils/axios/axios";
 import clone from "clone";
 import { withRouter } from "react-router-dom";
-
 
 const styles = {
   cardCategoryWhite: {
@@ -70,6 +71,12 @@ const styles = {
     /* boxShadow: theme.shadows[5], */
     padding: "15px",
     outline: "none"
+  },
+  alert: {
+    position: "absolute",
+    right: "20px",
+    top: "40px",
+    padding: "0 15px"
   }
 };
 
@@ -77,18 +84,41 @@ class EditWorkoutComponent extends React.Component {
   state = {
     openModal: false,
     exIndex: null,
-    workout: [
-      { exerciseId: "", repeats: 0, measurement: 0, measurementType: "" }
-    ]
+    alert: { display: "none", isPositive: null },
+    workout:
+      this.props.workouts.items.length && +this.props.match.params.date
+        ? this.props.workouts.items.find(
+            ({ date }) => date === +this.props.match.params.date
+          ).program
+        : []
   };
 
   addExercise = () => {
     this.setState({
       workout: [
         ...this.state.workout,
-        { exerciseId: "", repeats: 0, measurement: 0, measurementType: "" }
+        { exerciseId: "", repeats: 0, measurement: 0 }
       ]
     });
+  };
+
+  getMeasureType = exerciseId => {
+    const exercise = this.props.exercises.items.find(
+      item => item.id === exerciseId
+    );
+    if (!exercise) {
+      return null;
+    }
+    switch (exercise.measurement) {
+      case "kilograms":
+        return "kg";
+      case "meters":
+        return "m";
+      case "minutes":
+        return "min";
+      default:
+        break;
+    }
   };
 
   handleChange = (event, index) => {
@@ -99,25 +129,6 @@ class EditWorkoutComponent extends React.Component {
     this.setState(state => {
       const newWorkout = clone(state.workout);
       newWorkout[index][name] = value;
-      if (name === "exerciseId") {
-        const exercise = this.props.exercises.items.find(
-          item => item.id === value
-        );
-        switch (exercise.measurement) {
-          case "kilograms":
-            newWorkout[index].measurementType = "kg";
-            break;
-          case "meters":
-            newWorkout[index].measurementType = "m";
-            break;
-          case "minutes":
-            newWorkout[index].measurementType = "min";
-            break;
-
-          default:
-            break;
-        }
-      }
       return { ...state, workout: newWorkout };
     });
   };
@@ -156,10 +167,39 @@ class EditWorkoutComponent extends React.Component {
     }
   };
 
+  showAlert = isPositive => {
+    this.setState({ alert: { display: "block", isPositive } });
+    setTimeout(() => {
+      this.setState({
+        alert: { display: "none", isPositive: null },
+        newExercise: { exerciseName: "", measurement: "" }
+      });
+    }, 2000);
+  };
+
+  updateWorkout = () => {
+    const workout = {
+      date: +this.props.match.params.date,
+      program: this.state.workout
+    };
+    axios
+      .post("/update-workout", workout)
+      .then(response => {
+        console.log(response);
+        this.props.updateWorkout(workout);
+        this.showAlert(true);
+      })
+      .catch(error => {
+        console.log(error);
+        this.showAlert(false);
+      });
+  };
+
   componentDidMount() {
     if (this.props.match.params.date === ":date") {
       this.props.history.push(`/dashboard`);
     }
+
     const { exercisesLoadStart, exercisesLoadSucceed } = this.props;
     exercisesLoadStart();
     axios
@@ -174,8 +214,24 @@ class EditWorkoutComponent extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const { alert } = this.state;
+
     return (
       <React.Fragment>
+        <Paper
+          className={classes.alert}
+          elevation={1}
+          style={{
+            display: alert.display,
+            color: alert.isPositive ? "green" : "red"
+          }}
+        >
+          <p>
+            {alert.isPositive
+              ? "Your workout was successfuly updated"
+              : "Oops, something went wrong"}
+          </p>
+        </Paper>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -256,7 +312,7 @@ class EditWorkoutComponent extends React.Component {
                           value: item.measurement
                         }}
                       />
-                      <span>{item.measurementType}</span>
+                      <span>{this.getMeasureType(item.exerciseId)}</span>
                     </TableCell>
                     <TableCell>
                       <IconButton
@@ -289,10 +345,7 @@ class EditWorkoutComponent extends React.Component {
             </Table>
           </CardBody>
           <CardFooter>
-            <Button
-              onClick={() => console.log(this.state.workout)}
-              color="primary"
-            >
+            <Button onClick={this.updateWorkout} color="primary">
               Update workout
             </Button>
           </CardFooter>
@@ -302,12 +355,13 @@ class EditWorkoutComponent extends React.Component {
   }
 }
 
-const mapStateToProps = ({ exercises }) => ({ exercises });
+const mapStateToProps = ({ exercises, workouts }) => ({ exercises, workouts });
 
 const mapDispatchToProps = dispatch => ({
   exercisesLoadStart: () => dispatch(exercisesLoadStart()),
   exercisesLoadSucceed: exercises => dispatch(exercisesLoadSucceed(exercises)),
-  exercisesLoadFailed: error => dispatch(exercisesLoadFailed(error))
+  exercisesLoadFailed: error => dispatch(exercisesLoadFailed(error)),
+  updateWorkout: workout => dispatch(updateWorkout(workout))
 });
 
 const EditWorkout = connect(

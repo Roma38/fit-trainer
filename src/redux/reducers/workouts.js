@@ -2,7 +2,8 @@ import {
   WORKOUTS_LOADING,
   WORKOUTS_LOAD_SUCCEED,
   WORKOUTS_LOAD_FAILED,
-  ADD_WORKOUT
+  ADD_WORKOUT,
+  UPDATE_WORKOUT
 } from "../actions/workouts.js";
 
 const initialState = {
@@ -21,7 +22,12 @@ export const workoutsReduser = (state = initialState, { type, payload }) => {
     case WORKOUTS_LOAD_FAILED:
       return { ...state, loading: false, succeed: false, error: payload, items: [] };
     case ADD_WORKOUT:
-      return { ...state,  items: [...state.items, payload] };
+      return { ...state, items: [...state.items, payload] };
+      
+    case UPDATE_WORKOUT:
+      const workoutIndex = state.items.findIndex(({date}) => date === payload.date)
+      state.items[workoutIndex] = { date: payload.date, program: payload.program }
+      return { ...state };
 
     default:
       return state;

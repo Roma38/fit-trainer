@@ -6,7 +6,8 @@ const API_ENDPOINTS = {
   WORKOUTS: "/workouts",
   ADD_EXERCISE: "/add-exercise",
   UPDATE_EXERCISES: "/update-exercises",
-  ADD_WORKOUT: "/add-workout"
+  ADD_WORKOUT: "/add-workout",
+  UPDATE_WORKOUT: "/update-workout"
 };
 
 const generateId = array => {
@@ -46,7 +47,9 @@ axios.post = function(url, data) {
           resolve("ok");
           break;
         case API_ENDPOINTS.ADD_WORKOUT:
-          console.log(data);
+          resolve("ok");
+          break;
+        case API_ENDPOINTS.UPDATE_WORKOUT:
           resolve("ok");
           break;
 
