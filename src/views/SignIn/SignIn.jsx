@@ -40,26 +40,47 @@ const styles = {
     position: "absolute",
     right: "20px",
     top: "40px",
-    padding: "0 15px"
+    padding: "0 15px",
+    fontWeight: "bold"
   }
 };
 
 class SignInComponent extends React.Component {
   state = {
-    alert: {display: "none"},
+    alert: { display: "none", text: "" },
     userData: { email: "", password: "" }
   };
 
+  showAlert = text => {
+    this.setState({ alert: { display: "block", text } });
+    setTimeout(() => {
+      this.setState({
+        alert: { display: "none", text: "" }
+      });
+    }, 2000);
+  };
+
   handleChange = event => {
-    this.setState({userData: { ...this.state.userData, [event.target.name]: event.target.value }});
+    this.setState({
+      userData: {
+        ...this.state.userData,
+        [event.target.name]: event.target.value
+      }
+    });
   };
 
   handleSubmit = () => {
-    console.log(this.state.userData);
+    this.props.authRequested();
     axios
       .post("/sign-in", this.state.userData)
-      .then(response => {})
-      .catch(error => console.log(error));
+      .then(response => {
+        localStorage.setItem("token", response.token);
+        this.props.authSucceed(response.email, response.token);
+      })
+      .catch(error => {
+        this.showAlert(error);
+        this.props.authFailed(error);
+      });
   };
 
   render() {
@@ -76,11 +97,7 @@ class SignInComponent extends React.Component {
             color: "red"
           }}
         >
-          <p>
-            {alert.isPositive
-              ? "Your exercises was successfuly updated"
-              : "Oops, something went wrong"}
-          </p>
+          <p>{alert.text}</p>
         </Paper>
         <Card>
           <CardHeader color="primary">
@@ -130,7 +147,7 @@ class SignInComponent extends React.Component {
 
 const mapDispatchToProps = dispatch => ({
   authRequested: () => dispatch(authRequested()),
-  authSucceed: exercises => dispatch(authSucceed(exercises)),
+  authSucceed: (email, token) => dispatch(authSucceed(email, token)),
   authFailed: error => dispatch(authFailed(error))
 });
 

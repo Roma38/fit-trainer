@@ -14,8 +14,9 @@ import HeaderLinks from "./HeaderLinks.jsx";
 import Button from "../CustomButtons/Button.jsx";
 
 import headerStyle from "../../assets/jss/material-dashboard-react/components/headerStyle.jsx";
+import { connect } from "react-redux";
 
-function Header({ ...props }) {
+function HeaderComponent({ ...props }) {
   function makeBrand() {
     var name;
     props.routes.map((prop, key) => {
@@ -40,7 +41,7 @@ function Header({ ...props }) {
           </Button>
         </div>
         <Hidden smDown implementation="css">
-          <HeaderLinks />
+          {props.auth.loggedIn ? <HeaderLinks /> : null}
         </Hidden>
         <Hidden mdUp implementation="css">
           <IconButton
@@ -55,6 +56,12 @@ function Header({ ...props }) {
     </AppBar>
   );
 }
+
+const mapStateToProps = ({ auth }) => ({ auth });
+
+const Header = connect(
+  mapStateToProps
+)(HeaderComponent);
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,

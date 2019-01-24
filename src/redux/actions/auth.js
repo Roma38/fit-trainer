@@ -8,10 +8,9 @@ export const authRequested = (email, password, confirmPass) => ({
   payload: { email, password, confirmPass }
 });
 
-export const authSucceed = (email, token) => ({
-  type: AUTH_SUCCEED,
-  payload: { email, token }
-});
+export const authSucceed = (email, token) => {
+  return { type: AUTH_SUCCEED, payload: { email, token } };
+};
 
 export const authFailed = error => ({
   type: AUTH_FAILED,

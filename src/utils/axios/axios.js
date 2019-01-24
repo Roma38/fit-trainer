@@ -1,6 +1,5 @@
 import exercisesFixture from "./fixture/exercises.json";
 import workoutsFixture from "./fixture/workouts.json";
-import usersFixture from "./fixture/users.json";
 
 const API_ENDPOINTS = {
   EXERCISES: "/exercises",
@@ -56,7 +55,18 @@ axios.post = function(url, data) {
           resolve("ok");
           break;
         case API_ENDPOINTS.SIGN_IN:
-          resolve("ok");
+          resolve({
+            email: data.email,
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+          });
+          //reject("Wrong email or password");
+          break;
+        case API_ENDPOINTS.SIGN_UP:
+          resolve({
+            email: data.email,
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+          });
+          //reject("Wrong email or password");
           break;
 
         default:

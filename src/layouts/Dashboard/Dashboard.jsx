@@ -12,24 +12,22 @@ import Header from "../../components/Header/Header.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
 import Sidebar from "../../components/Sidebar/Sidebar.jsx";
 
-import dashboardRoutes from "../../routes/dashboard.jsx";
+import {
+  dashboardRoutes,
+  authDashboardRoutes
+} from "../../routes/dashboard.jsx";
+
+import { connect } from "react-redux";
+
 
 import dashboardStyle from "../../assets/jss/material-dashboard-react/layouts/dashboardStyle.jsx";
 
 import image from "../../assets/img/sidebar-2.jpg";
 import logo from "../../assets/img/reactlogo.png";
 
-const switchRoutes = (
-  <Switch>
-    {dashboardRoutes.map((prop, key) => {
-      if (prop.redirect)
-        return <Redirect from={prop.path} to={prop.to} key={key} />;
-      return <Route path={prop.path} component={prop.component} key={key} />;
-    })}
-  </Switch>
-);
 
-class App extends React.Component {
+
+class AppComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,10 +65,20 @@ class App extends React.Component {
   }
   render() {
     const { classes, ...rest } = this.props;
+    const loggedIn = this.props.auth.loggedIn;
+    const switchRoutes = (
+      <Switch>
+        {(loggedIn ? dashboardRoutes : authDashboardRoutes).map((prop, key) => {
+          if (prop.redirect)
+            return <Redirect from={prop.path} to={prop.to} key={key} />;
+          return <Route path={prop.path} component={prop.component} key={key} />;
+        })}
+      </Switch>
+    );
     return (
       <div className={classes.wrapper}>
         <Sidebar
-          routes={dashboardRoutes}
+          routes={loggedIn ? dashboardRoutes : authDashboardRoutes}
           logoText={"Fit trainer"}
           logo={logo}
           image={image}
@@ -81,7 +89,7 @@ class App extends React.Component {
         />
         <div className={classes.mainPanel} ref="mainPanel">
           <Switch>
-            {dashboardRoutes.map((prop, key) => {
+            {(loggedIn ? dashboardRoutes : authDashboardRoutes).map((prop, key) => {
               if (prop.redirect) return null;
 
               return (
@@ -90,7 +98,7 @@ class App extends React.Component {
                   render={routerProps => {
                     return (
                       <Header
-                        routes={dashboardRoutes}
+                        routes={loggedIn ? dashboardRoutes : authDashboardRoutes}
                         handleDrawerToggle={this.handleDrawerToggle}
                         {...routerProps}
                       />
@@ -116,8 +124,12 @@ class App extends React.Component {
   }
 }
 
-App.propTypes = {
+AppComponent.propTypes = {
   classes: PropTypes.object.isRequired
 };
+
+const mapStateToProps = ({ auth }) => ({ auth });
+
+const App = connect(mapStateToProps)(AppComponent);
 
 export default withStyles(dashboardStyle)(App);

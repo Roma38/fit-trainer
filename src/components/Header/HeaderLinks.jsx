@@ -11,16 +11,14 @@ import Hidden from "@material-ui/core/Hidden";
 import Poppers from "@material-ui/core/Popper";
 // @material-ui/icons
 import Person from "@material-ui/icons/Person";
-import Notifications from "@material-ui/icons/Notifications";
-import Dashboard from "@material-ui/icons/Dashboard";
-import Search from "@material-ui/icons/Search";
-// core components
-import CustomInput from "../CustomInput/CustomInput.jsx";
 import Button from "../CustomButtons/Button.jsx";
 
 import headerLinksStyle from "../../assets/jss/material-dashboard-react/components/headerLinksStyle.jsx";
 
-class HeaderLinks extends React.Component {
+import { connect } from "react-redux";
+import { logOut } from "../../redux/actions/auth.js";
+
+class HeaderLinksComponent extends React.Component {
   state = {
     open: false
   };
@@ -36,12 +34,18 @@ class HeaderLinks extends React.Component {
     this.setState({ open: false });
   };
 
+  signOut = () => {
+    localStorage.removeItem("token");
+    this.props.logOut();
+  };
+
   render() {
     const { classes } = this.props;
     const { open } = this.state;
+    
     return (
       <div>
-        <div className={classes.searchWrapper}>
+        {/* <div className={classes.searchWrapper}>
           <CustomInput
             formControlProps={{
               className: classes.margin + " " + classes.search
@@ -56,8 +60,8 @@ class HeaderLinks extends React.Component {
           <Button color="white" aria-label="edit" justIcon round>
             <Search />
           </Button>
-        </div>
-        <Button
+        </div> */}
+        {/* <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
           simple={!(window.innerWidth > 959)}
@@ -68,7 +72,8 @@ class HeaderLinks extends React.Component {
           <Hidden mdUp implementation="css">
             <p className={classes.linkText}>Dashboard</p>
           </Hidden>
-        </Button>
+        </Button> */}
+        <span>{this.props.auth.email}</span>
         <div className={classes.manager}>
           <Button
             buttonRef={node => {
@@ -82,8 +87,8 @@ class HeaderLinks extends React.Component {
             onClick={this.handleToggle}
             className={classes.buttonLink}
           >
-            <Notifications className={classes.icons} />
-            <span className={classes.notifications}>5</span>
+            <Person className={classes.icons} />
+            {/* <span className={classes.notifications}>5</span> */}
             <Hidden mdUp implementation="css">
               <p onClick={this.handleClick} className={classes.linkText}>
                 Notification
@@ -114,12 +119,12 @@ class HeaderLinks extends React.Component {
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList role="menu">
                       <MenuItem
-                        onClick={this.handleClose}
+                        onClick={this.signOut}
                         className={classes.dropdownItem}
                       >
-                        Mike John responded to your email
+                        Sign out
                       </MenuItem>
-                      <MenuItem
+                      {/* <MenuItem
                         onClick={this.handleClose}
                         className={classes.dropdownItem}
                       >
@@ -142,7 +147,7 @@ class HeaderLinks extends React.Component {
                         className={classes.dropdownItem}
                       >
                         Another One
-                      </MenuItem>
+                      </MenuItem> */}
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
@@ -150,7 +155,7 @@ class HeaderLinks extends React.Component {
             )}
           </Poppers>
         </div>
-        <Button
+        {/* <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
           simple={!(window.innerWidth > 959)}
@@ -161,10 +166,21 @@ class HeaderLinks extends React.Component {
           <Hidden mdUp implementation="css">
             <p className={classes.linkText}>Profile</p>
           </Hidden>
-        </Button>
+        </Button> */}
       </div>
     );
   }
 }
+
+const mapStateToProps = ({ auth }) => ({ auth });
+
+const mapDispatchToProps = dispatch => ({
+  logOut: () => dispatch(logOut())
+});
+
+const HeaderLinks = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HeaderLinksComponent);
 
 export default withStyles(headerLinksStyle)(HeaderLinks);

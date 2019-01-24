@@ -20,13 +20,14 @@ export const authReducer = (state = initialState, { type, payload }) => {
     case AUTH_SUCCEED:
       return {
         ...state,
+        authLoading: false,
         loggedIn: true,
         email: payload.email,
         token: payload.token,
         authError: null
       };
     case AUTH_FAILED:
-      return { ...state, authError: payload.error };
+      return { ...state, authError: payload };
     case LOG_OUT:
       return { ...state, loggedIn: false, email: null, token: null };
 
