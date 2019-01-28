@@ -4,10 +4,12 @@ import { createBrowserHistory } from "history";
 import { Router, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/index.js";
-
+import axios from "axios";
 import "./assets/css/material-dashboard-react.css";
 
 import indexRoutes from "./routes/index.jsx";
+
+axios.defaults.withCredentials = true;
 
 const hist = createBrowserHistory();
 

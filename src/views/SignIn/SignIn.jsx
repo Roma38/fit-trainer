@@ -17,7 +17,9 @@ import {
   authSucceed,
   authFailed
 } from "../../redux/actions/auth.js";
-import { axios } from "../../utils/axios/axios";
+import axios from "axios";
+import { API_HOST } from "../../config";
+
 
 const styles = {
   cardCategoryWhite: {
@@ -72,14 +74,16 @@ class SignInComponent extends React.Component {
   handleSubmit = () => {
     this.props.authRequested();
     axios
-      .post("/sign-in", this.state.userData)
+      .post(`${API_HOST}sign-in`, this.state.userData)
       .then(response => {
+        console.log("response:", response);
         localStorage.setItem("token", response.token);
         this.props.authSucceed(response.email, response.token);
       })
       .catch(error => {
-        this.showAlert(error);
-        this.props.authFailed(error);
+        /* this.showAlert(error);
+        this.props.authFailed(error); */
+        console.log(error);
       });
   };
 

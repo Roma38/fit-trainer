@@ -18,14 +18,18 @@ import {
 } from "../../routes/dashboard.jsx";
 
 import { connect } from "react-redux";
-
+import {
+  authRequested,
+  authSucceed,
+  authFailed
+} from "../../redux/actions/auth.js";
 
 import dashboardStyle from "../../assets/jss/material-dashboard-react/layouts/dashboardStyle.jsx";
 
 import image from "../../assets/img/sidebar-2.jpg";
 import logo from "../../assets/img/reactlogo.png";
-
-
+import axios from "axios";
+import { API_HOST } from "../../config";
 
 class AppComponent extends React.Component {
   constructor(props) {
@@ -47,6 +51,13 @@ class AppComponent extends React.Component {
     }
   }
   componentDidMount() {
+    axios
+      .get(`${API_HOST}user-data`)
+      .then(res => {
+        this.props.authSucceed(...res.data);
+      })
+      .catch(error => console.log(error));    //what to do with errors?
+
     if (navigator.platform.indexOf("Win") > -1) {
       const ps = new PerfectScrollbar(this.refs.mainPanel);
     }
@@ -71,7 +82,9 @@ class AppComponent extends React.Component {
         {(loggedIn ? dashboardRoutes : authDashboardRoutes).map((prop, key) => {
           if (prop.redirect)
             return <Redirect from={prop.path} to={prop.to} key={key} />;
-          return <Route path={prop.path} component={prop.component} key={key} />;
+          return (
+            <Route path={prop.path} component={prop.component} key={key} />
+          );
         })}
       </Switch>
     );
@@ -89,25 +102,29 @@ class AppComponent extends React.Component {
         />
         <div className={classes.mainPanel} ref="mainPanel">
           <Switch>
-            {(loggedIn ? dashboardRoutes : authDashboardRoutes).map((prop, key) => {
-              if (prop.redirect) return null;
+            {(loggedIn ? dashboardRoutes : authDashboardRoutes).map(
+              (prop, key) => {
+                if (prop.redirect) return null;
 
-              return (
-                <Route
-                  path={prop.path}
-                  render={routerProps => {
-                    return (
-                      <Header
-                        routes={loggedIn ? dashboardRoutes : authDashboardRoutes}
-                        handleDrawerToggle={this.handleDrawerToggle}
-                        {...routerProps}
-                      />
-                    );
-                  }}
-                  key={key}
-                />
-              );
-            })}
+                return (
+                  <Route
+                    path={prop.path}
+                    render={routerProps => {
+                      return (
+                        <Header
+                          routes={
+                            loggedIn ? dashboardRoutes : authDashboardRoutes
+                          }
+                          handleDrawerToggle={this.handleDrawerToggle}
+                          {...routerProps}
+                        />
+                      );
+                    }}
+                    key={key}
+                  />
+                );
+              }
+            )}
           </Switch>
           {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
           {this.getRoute() ? (
@@ -130,6 +147,15 @@ AppComponent.propTypes = {
 
 const mapStateToProps = ({ auth }) => ({ auth });
 
-const App = connect(mapStateToProps)(AppComponent);
+const mapDispatchToProps = dispatch => ({
+  authRequested: () => dispatch(authRequested()),
+  authSucceed: (email, token) => dispatch(authSucceed(email, token)),
+  authFailed: error => dispatch(authFailed(error))
+});
+
+const App = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppComponent);
 
 export default withStyles(dashboardStyle)(App);

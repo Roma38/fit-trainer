@@ -81,7 +81,7 @@ const styles = {
 
 class EditExercisesComponent extends React.Component {
   state = {
-    exercises: [],
+    exercises: this.props.exercises.items,
     openModal: false,
     exIndex: null,
     alert: { display: "none", isPositive: null }
@@ -178,12 +178,16 @@ class EditExercisesComponent extends React.Component {
       .get("/exercises")
       .then(exercises => {
         exercisesLoadSucceed(exercises);
-        this.setState({ exercises });
+        // this.setState({ exercises });
       })
       .catch(error => {
         console.log(error);
         exercisesLoadFailed(error);
       });
+  }
+
+  componentWillUnmount() {
+    this.isUnmounted = true;
   }
 
   render() {

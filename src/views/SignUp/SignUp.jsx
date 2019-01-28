@@ -17,7 +17,8 @@ import {
   authSucceed,
   authFailed
 } from "../../redux/actions/auth.js";
-import { axios } from "../../utils/axios/axios";
+import axios from "axios";
+import { API_HOST } from "../../config";
 
 const styles = {
   cardCategoryWhite: {
@@ -70,21 +71,23 @@ class SignInComponent extends React.Component {
   };
 
   handleSubmit = () => {
-    const {password, repeatPassword} = this.state.userData
+    const { password, repeatPassword } = this.state.userData;
     if (password !== repeatPassword) {
-      return this.showAlert("Password fields doesn't match!!!")
+      return this.showAlert("Password fields doesn't match!!!");
     }
     this.props.authRequested();
     axios
-      .post("/sign-up", this.state.userData)
-      .then(response => {
-        localStorage.setItem("token", response.token);
-        this.props.authSucceed(response.email, response.token);
+      .post(`${API_HOST}sign-up`, this.state.userData)
+      .then(({ data }) => {
+        localStorage.setItem("token", data.token);
+        this.props.authSucceed(data.email, data.token);
+        console.log(data);
       })
       .catch(error => {
-        this.showAlert(error);
-        this.props.authFailed(error);
-      });
+        console.log(error);
+        /* this.showAlert(error);
+        this.props.authFailed(error); */
+      });   //не могу получить JSON 
   };
 
   render() {
