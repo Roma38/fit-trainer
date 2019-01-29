@@ -32,9 +32,10 @@ import {
   exercisesLoadFailed
 } from "../../redux/actions/exercises";
 import { updateWorkout } from "../../redux/actions/workouts";
-import { axios } from "../../utils/axios/axios";
+import axios from "axios";
 import clone from "clone";
 import { withRouter } from "react-router-dom";
+import { API_HOST } from "../../config";
 
 const styles = {
   cardCategoryWhite: {
@@ -88,7 +89,8 @@ class EditWorkoutComponent extends React.Component {
     workout:
       this.props.workouts.items.length && +this.props.match.params.date
         ? this.props.workouts.items.find(
-            ({ date }) => date === +this.props.match.params.date
+            ({ date }) =>
+              new Date(date).getTime() === +this.props.match.params.date
           ).program
         : []
   };
@@ -97,14 +99,14 @@ class EditWorkoutComponent extends React.Component {
     this.setState({
       workout: [
         ...this.state.workout,
-        { exerciseId: "", repeats: 0, measurement: 0 }
+        { exercise_id: "", repeats: 0, measurement: 0 }
       ]
     });
   };
 
   getMeasureType = exerciseId => {
     const exercise = this.props.exercises.items.find(
-      item => item.id === exerciseId
+      item => item._id === exerciseId
     );
     if (!exercise) {
       return null;
@@ -183,10 +185,9 @@ class EditWorkoutComponent extends React.Component {
       program: this.state.workout
     };
     axios
-      .post("/update-workout", workout)
-      .then(response => {
-        console.log(response);
-        this.props.updateWorkout(workout);
+      .put(`${API_HOST}workouts`, workout)
+      .then(({ data }) => {
+        this.props.updateWorkout(data);
         this.showAlert(true);
       })
       .catch(error => {
@@ -203,12 +204,13 @@ class EditWorkoutComponent extends React.Component {
     const { exercisesLoadStart, exercisesLoadSucceed } = this.props;
     exercisesLoadStart();
     axios
-      .get("/exercises")
-      .then(exercises => {
-        exercisesLoadSucceed(exercises);
+      .get(`${API_HOST}exercises`)
+      .then(({ data }) => {
+        exercisesLoadSucceed(data);
       })
       .catch(error => {
         console.log(error);
+        exercisesLoadFailed(error);
       });
   }
 
@@ -272,14 +274,14 @@ class EditWorkoutComponent extends React.Component {
                           Exercise
                         </InputLabel>
                         <Select
-                          value={item.exerciseId}
+                          value={item.exercise_id}
                           onChange={event => this.handleChange(event, index)}
                           input={
-                            <Input name="exerciseId" id="age-auto-width" />
+                            <Input name="exercise_id" id="age-auto-width" />
                           }
                         >
                           {this.props.exercises.items.map((exercise, index) => (
-                            <MenuItem key={index} value={exercise.id}>
+                            <MenuItem key={index} value={exercise._id}>
                               {exercise.name}
                             </MenuItem>
                           ))}
@@ -312,7 +314,7 @@ class EditWorkoutComponent extends React.Component {
                           value: item.measurement
                         }}
                       />
-                      <span>{this.getMeasureType(item.exerciseId)}</span>
+                      <span>{this.getMeasureType(item.exercise_id)}</span>
                     </TableCell>
                     <TableCell>
                       <IconButton

@@ -33,7 +33,8 @@ import {
   exercisesLoadFailed
 } from "../../redux/actions/exercises";
 import clone from "clone";
-import { axios } from "../../utils/axios/axios";
+import axios from "axios";
+import { API_HOST } from "../../config";
 
 const styles = {
   cardCategoryWhite: {
@@ -149,10 +150,9 @@ class EditExercisesComponent extends React.Component {
 
   updateExercises = () => {
     axios
-      .post("/update-exercises", this.state.exercises)
-      .then(response => {
-        console.log(response);
-        this.props.exercisesLoadSucceed(this.state.exercises);
+      .put(`${API_HOST}exercises`, this.state.exercises)
+      .then(({ data }) => {
+        this.props.exercisesLoadSucceed(data);
         this.showAlert(true);
       })
       .catch(error => {
@@ -172,13 +172,16 @@ class EditExercisesComponent extends React.Component {
   };
 
   componentDidMount() {
-    const { exercisesLoadStart, exercisesLoadSucceed, exercisesLoadFailed } = this.props;
+    const {
+      exercisesLoadStart,
+      exercisesLoadSucceed,
+      exercisesLoadFailed
+    } = this.props;
     exercisesLoadStart();
     axios
-      .get("/exercises")
-      .then(exercises => {
-        exercisesLoadSucceed(exercises);
-        // this.setState({ exercises });
+      .get(`${API_HOST}exercises`)
+      .then(({ data }) => {
+        exercisesLoadSucceed(data);
       })
       .catch(error => {
         console.log(error);
@@ -186,8 +189,10 @@ class EditExercisesComponent extends React.Component {
       });
   }
 
-  componentWillUnmount() {
-    this.isUnmounted = true;
+  componentDidUpdate(prevProps) {
+    if (prevProps.exercises.items !== this.props.exercises.items) {
+      this.setState({ exercises: this.props.exercises.items });
+    }
   }
 
   render() {
@@ -213,7 +218,7 @@ class EditExercisesComponent extends React.Component {
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
-          open={this.state.openModal} /* onClose={this.handleClose} */
+          open={this.state.openModal}
         >
           <div style={styles.modalStyles}>
             <p>Are you sure wanna delete this exercise?</p>
@@ -240,11 +245,11 @@ class EditExercisesComponent extends React.Component {
             <Table>
               <TableBody>
                 {this.state.exercises.map((exercise, index) => (
-                  <TableRow key={exercise.id}>
+                  <TableRow key={exercise._id}>
                     <TableCell>
                       <CustomInput
                         labelText="Exercise Name"
-                        id={`exercise-name-${exercise.id}`}
+                        id={`exercise-name-${exercise._id}`}
                         formControlProps={{ fullWidth: true }}
                         inputProps={{
                           name: "name",

@@ -17,6 +17,8 @@ import headerLinksStyle from "../../assets/jss/material-dashboard-react/componen
 
 import { connect } from "react-redux";
 import { logOut } from "../../redux/actions/auth.js";
+import axios from "axios";
+import { API_HOST } from "../../config";
 
 class HeaderLinksComponent extends React.Component {
   state = {
@@ -35,44 +37,18 @@ class HeaderLinksComponent extends React.Component {
   };
 
   signOut = () => {
-    localStorage.removeItem("token");
-    this.props.logOut();
+    axios.post(`${API_HOST}sign-out`).then(() => {
+      localStorage.removeItem("token");
+      this.props.logOut();
+    });
   };
 
   render() {
     const { classes } = this.props;
     const { open } = this.state;
-    
+
     return (
       <div>
-        {/* <div className={classes.searchWrapper}>
-          <CustomInput
-            formControlProps={{
-              className: classes.margin + " " + classes.search
-            }}
-            inputProps={{
-              placeholder: "Search",
-              inputProps: {
-                "aria-label": "Search"
-              }
-            }}
-          />
-          <Button color="white" aria-label="edit" justIcon round>
-            <Search />
-          </Button>
-        </div> */}
-        {/* <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-label="Dashboard"
-          className={classes.buttonLink}
-        >
-          <Dashboard className={classes.icons} />
-          <Hidden mdUp implementation="css">
-            <p className={classes.linkText}>Dashboard</p>
-          </Hidden>
-        </Button> */}
         <span>{this.props.auth.email}</span>
         <div className={classes.manager}>
           <Button
@@ -88,7 +64,6 @@ class HeaderLinksComponent extends React.Component {
             className={classes.buttonLink}
           >
             <Person className={classes.icons} />
-            {/* <span className={classes.notifications}>5</span> */}
             <Hidden mdUp implementation="css">
               <p onClick={this.handleClick} className={classes.linkText}>
                 Notification
@@ -124,30 +99,6 @@ class HeaderLinksComponent extends React.Component {
                       >
                         Sign out
                       </MenuItem>
-                      {/* <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        You have 5 new tasks
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        You're now friend with Andrew
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        Another Notification
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        Another One
-                      </MenuItem> */}
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>
@@ -155,18 +106,6 @@ class HeaderLinksComponent extends React.Component {
             )}
           </Poppers>
         </div>
-        {/* <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-label="Person"
-          className={classes.buttonLink}
-        >
-          <Person className={classes.icons} />
-          <Hidden mdUp implementation="css">
-            <p className={classes.linkText}>Profile</p>
-          </Hidden>
-        </Button> */}
       </div>
     );
   }

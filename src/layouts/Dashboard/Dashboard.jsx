@@ -53,10 +53,11 @@ class AppComponent extends React.Component {
   componentDidMount() {
     axios
       .get(`${API_HOST}user-data`)
-      .then(res => {
-        this.props.authSucceed(...res.data);
+      .then(({ data: { email, token } }) => {
+        //console.log(res);
+        this.props.authSucceed(email, token);
       })
-      .catch(error => console.log(error));    //what to do with errors?
+      .catch(error => console.log(error)); //TODO: what to do with errors?
 
     if (navigator.platform.indexOf("Win") > -1) {
       const ps = new PerfectScrollbar(this.refs.mainPanel);

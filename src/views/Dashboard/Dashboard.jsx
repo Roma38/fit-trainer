@@ -17,7 +17,8 @@ import {
   workoutsLoadSucceed,
   workoutsLoadFailed
 } from "../../redux/actions/workouts";
-import { axios } from "../../utils/axios/axios";
+import axios from "axios";
+import { API_HOST } from "../../config";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
@@ -26,19 +27,23 @@ import dashboardStyle from "../../assets/jss/material-dashboard-react/views/dash
 class DashboardComponent extends React.Component {
   onSelect = val => {
     const date = val.getTime();
-    const dateArray = this.props.workouts.items.map(item => item.date);
+    const dateArray = this.props.workouts.items.map(item =>
+      new Date(item.date).getTime()
+    );
     dateArray.includes(date)
       ? this.props.history.push(`/edit-workout/${date}`)
       : this.props.history.push(`/new-workout/${date}`);
+    //console.log("date:", date, "/dateArray:", dateArray);
   };
 
   componentDidMount() {
     const { workoutsLoadStart, workoutsLoadSucceed } = this.props;
     workoutsLoadStart();
     axios
-      .get("/workouts")
-      .then(workouts => {
-        workoutsLoadSucceed(workouts);
+      .get(`${API_HOST}workouts`)
+      .then(({ data }) => {
+        //console.log(data)
+        workoutsLoadSucceed(data);
       })
       .catch(error => {
         console.log(error);

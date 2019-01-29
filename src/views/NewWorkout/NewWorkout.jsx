@@ -32,7 +32,9 @@ import {
   exercisesLoadFailed
 } from "../../redux/actions/exercises";
 import { addWorkout } from "../../redux/actions/workouts";
-import { axios } from "../../utils/axios/axios";
+import axios from "axios";
+import { API_HOST } from "../../config";
+
 import clone from "clone";
 import { withRouter } from "react-router-dom";
 
@@ -85,14 +87,14 @@ class NewWorkoutComponent extends React.Component {
     openModal: false,
     exIndex: null,
     alert: { display: "none", isPositive: null },
-    workout: [{ exerciseId: "", repeats: 0, measurement: 0 }]
+    workout: [{ exercise_id: "", repeats: 0, measurement: 0 }]
   };
 
   addExercise = () => {
     this.setState({
       workout: [
         ...this.state.workout,
-        { exerciseId: "", repeats: 0, measurement: 0 }
+        { exercise_id: "", repeats: 0, measurement: 0 }
       ]
     });
   };
@@ -102,7 +104,7 @@ class NewWorkoutComponent extends React.Component {
       return null;
     }
     const exercise = this.props.exercises.items.find(
-      item => item.id === exerciseId
+      item => item._id === exerciseId
     );
     switch (exercise.measurement) {
       case "kilograms":
@@ -178,8 +180,8 @@ class NewWorkoutComponent extends React.Component {
       program: this.state.workout
     };
     axios
-      .post("/add-workout", workout)
-      .then(response => {
+      .post(`${API_HOST}workouts`, workout)
+      .then(() => {
         this.props.addWorkout(workout);
         this.showAlert(true);
       })
@@ -200,9 +202,9 @@ class NewWorkoutComponent extends React.Component {
     } = this.props;
     exercisesLoadStart();
     axios
-      .get("/exercises")
-      .then(exercises => {
-        exercisesLoadSucceed(exercises);
+      .get(`${API_HOST}exercises`)
+      .then(({ data }) => {
+        exercisesLoadSucceed(data);
       })
       .catch(error => {
         exercisesLoadFailed(error);
@@ -270,14 +272,14 @@ class NewWorkoutComponent extends React.Component {
                           Exercise
                         </InputLabel>
                         <Select
-                          value={item.exerciseId}
+                          value={item.exercise_id}
                           onChange={event => this.handleChange(event, index)}
                           input={
-                            <Input name="exerciseId" id="age-auto-width" />
+                            <Input name="exercise_id" id="age-auto-width" />
                           }
                         >
                           {this.props.exercises.items.map((exercise, index) => (
-                            <MenuItem key={index} value={exercise.id}>
+                            <MenuItem key={index} value={exercise._id}>
                               {exercise.name}
                             </MenuItem>
                           ))}
@@ -310,7 +312,7 @@ class NewWorkoutComponent extends React.Component {
                           value: item.measurement
                         }}
                       />
-                      <span>{this.getMeasureType(item.exerciseId)}</span>
+                      <span>{this.getMeasureType(item.exercise_id)}</span>
                     </TableCell>
                     <TableCell>
                       <IconButton

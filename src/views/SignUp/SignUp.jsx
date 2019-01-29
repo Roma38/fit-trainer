@@ -83,11 +83,10 @@ class SignInComponent extends React.Component {
         this.props.authSucceed(data.email, data.token);
         console.log(data);
       })
-      .catch(error => {
-        console.log(error);
-        /* this.showAlert(error);
-        this.props.authFailed(error); */
-      });   //не могу получить JSON 
+      .catch(({ response: { data: { error } } }) => {
+        this.showAlert(error);
+        this.props.authFailed(error);
+      });
   };
 
   render() {

@@ -15,7 +15,9 @@ import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import Paper from "@material-ui/core/Paper";
 
-import { axios } from "../../utils/axios/axios";
+import axios from "axios";
+import { API_HOST } from "../../config";
+
 
 const styles = {
   cardCategoryWhite: {
@@ -59,11 +61,8 @@ class NewExercise extends React.Component {
 
   addExercise = () => {
     axios
-      .post("/add-exercise", { ...this.state.newExercise })
-      .then(response => {
-        console.log(response);
-        this.showAlert(true);
-      })
+      .post(`${API_HOST}exercises`, { ...this.state.newExercise })
+      .then(() => this.showAlert(true))
       .catch(error => {
         console.log(error);
         this.showAlert(false);

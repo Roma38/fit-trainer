@@ -20,7 +20,6 @@ import {
 import axios from "axios";
 import { API_HOST } from "../../config";
 
-
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
@@ -75,15 +74,13 @@ class SignInComponent extends React.Component {
     this.props.authRequested();
     axios
       .post(`${API_HOST}sign-in`, this.state.userData)
-      .then(response => {
-        console.log("response:", response);
-        localStorage.setItem("token", response.token);
-        this.props.authSucceed(response.email, response.token);
+      .then(({ data: { email, token } }) => {
+        localStorage.setItem("token", token);
+        this.props.authSucceed(email, token);
       })
-      .catch(error => {
-        /* this.showAlert(error);
-        this.props.authFailed(error); */
-        console.log(error);
+      .catch(({ response: { data: { error } } }) => {
+        this.showAlert(error);
+        this.props.authFailed(error);
       });
   };
 
