@@ -69,5 +69,3 @@ export const authDashboardRoutes = [
   },
   { redirect: true, path: "/", to: "/sign-in", navbarName: "Redirect" }
 ];
-/* export default dashboardRoutes;
- */

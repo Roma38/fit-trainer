@@ -3,11 +3,9 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import CustomInput from "../../components/CustomInput/CustomInput";
-import Button from "../../components/CustomButtons/Button";
 import Card from "../../components/Card/Card";
 import CardHeader from "../../components/Card/CardHeader";
 import CardBody from "../../components/Card/CardBody";
-import CardFooter from "../../components/Card/CardFooter";
 import Paper from "@material-ui/core/Paper";
 
 import { Link } from "react-router-dom";
@@ -23,13 +21,15 @@ import { API_HOST } from "../../config";
 import {
   cardCategoryWhite,
   cardTitleWhite,
-  alert
+  alert,
+  uiButton
 } from "../../styles/styles.js";
 
 const styles = {
   cardCategoryWhite,
   cardTitleWhite,
-  alert
+  alert,
+  uiButton
 };
 
 class SignInComponent extends React.Component {
@@ -56,7 +56,8 @@ class SignInComponent extends React.Component {
     });
   };
 
-  handleSubmit = () => {
+  handleSubmit = event => {
+    event.preventDefault();
     const { password, repeatPassword } = this.state.userData;
     if (password !== repeatPassword) {
       return this.showAlert("Password fields doesn't match!!!");
@@ -98,7 +99,11 @@ class SignInComponent extends React.Component {
             </p>
           </CardHeader>
           <CardBody>
-            <form className={classes.root} autoComplete="off">
+            <form
+              className={classes.root}
+              autoComplete="off"
+              onSubmit={this.handleSubmit}
+            >
               <CustomInput
                 labelText="Email address"
                 id="email"
@@ -106,7 +111,8 @@ class SignInComponent extends React.Component {
                 inputProps={{
                   name: "email",
                   onChange: this.handleChange,
-                  type: "email"
+                  type: "email",
+                  required: true
                 }}
               />
               <CustomInput
@@ -116,7 +122,8 @@ class SignInComponent extends React.Component {
                 inputProps={{
                   name: "password",
                   onChange: this.handleChange,
-                  type: "password"
+                  type: "password",
+                  required: true
                 }}
               />
               <CustomInput
@@ -126,18 +133,15 @@ class SignInComponent extends React.Component {
                 inputProps={{
                   name: "repeatPassword",
                   onChange: this.handleChange,
-                  type: "password"
+                  type: "password",
+                  required: true
                 }}
               />
+              <Link to="/sign-in">already have an account? sign-in</Link>
+              <br />
+              <button className={classes.uiButton}>ok</button>
             </form>
           </CardBody>
-          <CardFooter>
-            <Button onClick={this.handleSubmit} color="primary">
-              Sign up
-            </Button>
-            <br />
-            <Link to="/sign-in">already have an account? sign-in</Link>
-          </CardFooter>
         </Card>
       </React.Fragment>
     );
