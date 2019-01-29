@@ -15,33 +15,18 @@ import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import Paper from "@material-ui/core/Paper";
 
+import {
+  cardCategoryWhite,
+  cardTitleWhite,
+  alert
+} from "../../styles/styles.js";
 import axios from "axios";
 import { API_HOST } from "../../config";
 
-
 const styles = {
-  cardCategoryWhite: {
-    color: "rgba(255,255,255,.62)",
-    margin: "0",
-    fontSize: "14px",
-    marginTop: "0",
-    marginBottom: "0"
-  },
-  cardTitleWhite: {
-    color: "#FFFFFF",
-    marginTop: "0px",
-    minHeight: "auto",
-    fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: "3px",
-    textDecoration: "none"
-  },
-  alert: {
-    position: "absolute",
-    right: "20px",
-    top: "40px",
-    padding: "0 15px"
-  }
+  cardCategoryWhite,
+  cardTitleWhite,
+  alert
 };
 
 class NewExercise extends React.Component {

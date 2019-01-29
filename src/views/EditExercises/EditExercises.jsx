@@ -36,48 +36,18 @@ import clone from "clone";
 import axios from "axios";
 import { API_HOST } from "../../config";
 
+import {
+  cardCategoryWhite,
+  cardTitleWhite,
+  alert,
+  modalStyles
+} from "../../styles/styles.js";
+
 const styles = {
-  cardCategoryWhite: {
-    "&,& a,& a:hover,& a:focus": {
-      color: "rgba(255,255,255,.62)",
-      margin: "0",
-      fontSize: "14px",
-      marginTop: "0",
-      marginBottom: "0"
-    },
-    "& a,& a:hover,& a:focus": {
-      color: "#FFFFFF"
-    }
-  },
-  cardTitleWhite: {
-    color: "#FFFFFF",
-    marginTop: "0px",
-    minHeight: "auto",
-    fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: "3px",
-    textDecoration: "none",
-    "& small": {
-      color: "#777",
-      fontSize: "65%",
-      fontWeight: "400",
-      lineHeight: "1"
-    }
-  },
-  modalStyles: {
-    position: "absolute",
-    width: "350px",
-    backgroundColor: "white",
-    /* boxShadow: theme.shadows[5], */
-    padding: "15px",
-    outline: "none"
-  },
-  alert: {
-    position: "absolute",
-    right: "20px",
-    top: "40px",
-    padding: "0 15px"
-  }
+  cardCategoryWhite,
+  cardTitleWhite,
+  alert,
+  modalStyles
 };
 
 class EditExercisesComponent extends React.Component {

@@ -33,7 +33,6 @@ class DashboardComponent extends React.Component {
     dateArray.includes(date)
       ? this.props.history.push(`/edit-workout/${date}`)
       : this.props.history.push(`/new-workout/${date}`);
-    //console.log("date:", date, "/dateArray:", dateArray);
   };
 
   componentDidMount() {
@@ -42,7 +41,6 @@ class DashboardComponent extends React.Component {
     axios
       .get(`${API_HOST}workouts`)
       .then(({ data }) => {
-        //console.log(data)
         workoutsLoadSucceed(data);
       })
       .catch(error => {
