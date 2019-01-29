@@ -40,12 +40,14 @@ class SignInComponent extends React.Component {
 
   showAlert = text => {
     this.setState({ alert: { display: "block", text } });
-    setTimeout(() => {
-      this.setState({
-        alert: { display: "none", text: "" }
-      });
+    this.hideAlertTimeout = setTimeout(() => {
+      this.setState({ alert: { display: "none", text: "" } });
     }, 2000);
   };
+
+  componentWillUnmount() {
+    clearTimeout(this.hideAlertTimeout);
+  }
 
   handleChange = event => {
     this.setState({

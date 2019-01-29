@@ -133,13 +133,17 @@ class EditExercisesComponent extends React.Component {
 
   showAlert = isPositive => {
     this.setState({ alert: { display: "block", isPositive } });
-    setTimeout(() => {
+    this.hideAlertTimeout = setTimeout(() => {
       this.setState({
         alert: { display: "none", isPositive: null },
         newExercise: { exerciseName: "", measurement: "" }
       });
     }, 2000);
   };
+
+  componentWillUnmount() {
+    clearTimeout(this.hideAlertTimeout);
+  }
 
   componentDidMount() {
     const {

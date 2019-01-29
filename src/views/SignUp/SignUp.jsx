@@ -68,7 +68,6 @@ class SignInComponent extends React.Component {
       .then(({ data }) => {
         localStorage.setItem("token", data.token);
         this.props.authSucceed(data.email, data.token);
-        console.log(data);
       })
       .catch(({ response: { data: { error } } }) => {
         this.showAlert(error);

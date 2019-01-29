@@ -59,12 +59,16 @@ class NewExercise extends React.Component {
       alert: { display: "block", isPositive },
       newExercise: { exerciseName: "", measurement: "" }
     });
-    setTimeout(() => {
+    this.hideAlertTimeout = setTimeout(() => {
       this.setState({
         alert: { display: "none", isPositive: null }
       });
     }, 2000);
   };
+
+  componentWillUnmount() {
+    clearTimeout(this.hideAlertTimeout);
+  }
 
   render() {
     const { classes } = this.props;
